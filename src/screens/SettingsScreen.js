@@ -5,11 +5,11 @@ import {CalendarDaysIcon} from 'react-native-heroicons/outline';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
-export default function HomeScreen(){
+export default function SettingsScreen(){
     BackHandler.addEventListener("hardwareBackPress", ()=>true)
     return (
             <View  className="flex-1 justify-center items-center bg-[#FFF6DC]">
-                <Text>HomeScreen</Text>
+                <Text>settings</Text>
             </View>
     )
 }
