@@ -4,11 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import WelcomeScreen from '../screens/WelcomeScreen'
-import CalendarScreen from '../screens/CalendarScreen';
+import PlannerScreen from '../screens/PlannerScreen';
 import RecipesScreen from '../screens/RecipesScreen';
 import ListScreen from '../screens/ListScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import {CalendarDaysIcon, HomeIcon} from 'react-native-heroicons/outline';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 
 
@@ -30,7 +29,7 @@ function TabNavigator(){
         <Ionicons name='home-outline' color={color} size={size} />
       )
     }}/>
-    <Tab.Screen name="Calendar" component={CalendarScreen} options={{
+    <Tab.Screen name="Planner" component={PlannerScreen} options={{
       tabBarShowLabel: false,
       tabBarIcon: ({ color, size }) => (
         <Ionicons name='calendar-sharp' color={color} size={size} />
