@@ -14,9 +14,9 @@ export default function RecipesScreen(){
         </View>
         <View className="flex-1 items-center" style={{padding:wp(5)}}>
             <View className="flex-row">
-                <DatePickerInput locale="pl" label={'Od dnia:'} value={inputDate} inputMode='start' onChange={(d) => setInputDate(d)} mode='outlined'/>
+                <DatePickerInput locale="pl" label={''} value={inputDate} inputMode='start' onChange={(d) => setInputDate(d)} mode='outlined'/>
                 <Text>  </Text>
-                <DatePickerInput locale="pl" label={'Do dnia:'} value={inputDate} inputMode='start' onChange={(d) => setInputDate(d)} mode='outlined'/>
+                <DatePickerInput locale="pl" label={''} value={inputDate} inputMode='start' onChange={(d) => setInputDate(d)} mode='outlined'/>
             </View>
         </View>
     </SafeAreaView>
