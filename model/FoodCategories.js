@@ -1,14 +1,17 @@
-import { appSchema, tableSchema } from '@nozbe/watermelondb'
+import { Model} from '@nozbe/watermelondb'
+import {field, date, children, action, readonly} from '@nozbe/watermelondb/decorators';
 
-export const FoodCategories = appSchema({
-  version: 1,
-  tables: [
-    tableSchema({
-      name: 'foodCategories',
-      columns: [
-        { name: 'created_at', type: 'number' },
-        { name: 'name', type: 'string'},
-      ]
-    }),
-  ]
-})
+export default class FoodCategories extends Model{
+  static table = 'foodCategories';
+
+  @readonly @date('created_at') createdAt;
+  @field('name') name;
+
+  // Actions ---------------
+  @action async getFoodCategory() {
+      return {
+          name: this.name,
+      };
+  }
+
+};
