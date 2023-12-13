@@ -5,11 +5,41 @@ import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
-//import { DatabaseProvider } from "@nozbe/watermelondb/DatabaseProvider";
+import syncProvider from './providers/SyncProvider';
+import { databaseWatermelon } from './model/database';
+import { Database } from "@nozbe/watermelondb";
+import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
+import { DatabaseProvider } from '@nozbe/watermelondb/react'
+import schema from "./model/schema";
+import migrations from "./model/migrations";
+//import { FoodCategories } from "./model/FoodCategories";
+//import { Ingredients } from "./model/Ingredients";
+import Products from './model/Products';
+//import { Recipes } from "./model/Recipes";
+/*const adapter = new SQLiteAdapter({
+    dbName:'ArcaVictu',
+    schema,
+    migrations,
+    //jsi: true,  Platform.OS === 'ios' 
+    //onSetUpError: error => {
+    //}
+  })
 
+  const databaseWatermelon = new Database({
+    adapter,
+    modelClasses: [
+      //FoodCategories,
+      //Ingredients,
+      Products,
+      //Recipes,
+    ],
+
+    actionsEnabled:true,
+  })*/
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  mySync();
 
   const [fontsLoaded, fontError] = useFonts({
     'Gothic': require('./assets/fonts/CenturyGothic.otf'),
@@ -25,10 +55,15 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return <AppLoading/>
   }
+  
   return (
     <>
-      <Navigation/>
-      {/*<DatabaseProvider database={database}></DatabaseProvider>*/}
+      
+      <DatabaseProvider database={databaseWatermelon}><Navigation/></DatabaseProvider>
     </>
   );
+}
+
+async function mySync(){
+  syncProvider();
 }
