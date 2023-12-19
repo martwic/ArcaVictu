@@ -1,17 +1,16 @@
 import { Database } from "@nozbe/watermelondb";
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
-
-//import { FoodCategories } from "./model/FoodCategories";
-//import { Ingredients } from "./model/Ingredients";
-import Products from './Products';
+import migrations from "./migrations";
+import  FoodCategories  from "./FoodCategories";
+import  Ingredients  from "./Ingredients";
+import Products from "./Products";
 import schema from './schema';
-import migrations from './migrations';
-//import { Recipes } from "./model/Recipes";
+import  Recipes  from "./Recipes";
 const adapter = new SQLiteAdapter({
     dbName:'ArcaVictu',
     schema,
     migrations,
-    //jsi: true,  Platform.OS === 'ios' 
+    jsi: true,  //Platform.OS === 'ios' 
     //onSetUpError: error => {
     //}
   })

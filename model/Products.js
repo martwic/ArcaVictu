@@ -7,7 +7,7 @@ export default class Products extends Model{
     ingredients: { type: 'has_many', foreignKey: 'product_id' },
 };
 
-/**  @readonly @date('created_at') createdAt;
+  @readonly @date('created_at') createdAt;
   @field('name') name;
   @field('calories') calories;
   @field('carbohydrates') carbohydrates;
@@ -16,7 +16,7 @@ export default class Products extends Model{
   @field('photoPath') photoPath;
   @children('ingredients') ingredients
 
-
+/*
   // Actions ---------------
   @action async getRecipe() {
       return {
@@ -28,6 +28,6 @@ export default class Products extends Model{
           photoPath: this.photoPath,
           ingredients: this.ingredients,
       };
-  } */
-
+  } 
+*/
 };

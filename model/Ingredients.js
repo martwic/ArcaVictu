@@ -12,12 +12,12 @@ export default class Products extends Model{
   @field('measure') measure;
 
   // Actions ---------------
-  @action async getRecipe() {
-      return {
-          weight: this.weight,
-          amount: this.amount,
-          measure: this.measure,
-          products: this.products,
-      };
-  }
+  //@action async getRecipe() {
+      //return {
+         // weight: this.weight,
+         // amount: this.amount,
+         // measure: this.measure,
+         // products: this.products,
+     // };
+ // }
 };

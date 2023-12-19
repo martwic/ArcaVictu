@@ -8,10 +8,10 @@ export default class FoodCategories extends Model{
   @field('name') name;
 
   // Actions ---------------
-  @action async getFoodCategory() {
-      return {
-          name: this.name,
-      };
-  }
+  //@action async getFoodCategory() {
+   //   return {
+   //       name: this.name,
+   //   };
+  //}
 
 };

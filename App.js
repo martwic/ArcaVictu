@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import Navigation from './src/navigation';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import { supabase } from './src/constants';
+import 'react-native-url-polyfill/auto'
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
 import syncProvider from './providers/SyncProvider';
@@ -12,10 +14,10 @@ import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 import { DatabaseProvider } from '@nozbe/watermelondb/react'
 import schema from "./model/schema";
 import migrations from "./model/migrations";
-//import { FoodCategories } from "./model/FoodCategories";
-//import { Ingredients } from "./model/Ingredients";
+import { FoodCategories } from "./model/FoodCategories";
+import { Ingredients } from "./model/Ingredients";
 import Products from './model/Products';
-//import { Recipes } from "./model/Recipes";
+import { Recipes } from "./model/Recipes";
 /*const adapter = new SQLiteAdapter({
     dbName:'ArcaVictu',
     schema,
@@ -59,7 +61,9 @@ export default function App() {
   return (
     <>
       
-      <DatabaseProvider database={databaseWatermelon}><Navigation/></DatabaseProvider>
+      <DatabaseProvider database={databaseWatermelon}>
+        <Navigation/>
+        </DatabaseProvider>
     </>
   );
 }

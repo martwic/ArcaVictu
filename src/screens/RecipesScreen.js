@@ -5,14 +5,44 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { AntDesign } from '@expo/vector-icons';
 import Products from '../../model/Products';
-//import { databaseWatermelon } from '../../model/database';
+import { databaseWatermelon } from '../../model/database';
 import { useDatabase } from '@nozbe/watermelondb/react'
 import { FlatList } from 'react-native';
 import { supabase } from '../constants';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { Alert } from 'react-native';
+import { Input } from 'react-native-elements';
 
 export default function RecipesScreen(){
-    const database = useDatabase()
-    //const productsCollection = database.read('products')
+
+    //const database = useDatabase()
+    
+    useEffect(() => {
+      getProducts()
+      })
+    const [productName, setProductName] = useState('')
+    //const [calories, setCalories] = useState('')
+    async function getProducts() {
+        try {
+          const { data, error, status } = await supabase.from('products').select(`name, calories`)
+          if (error && status !== 406) {
+            throw error
+          }
+          if (data) {
+            setProductName(data)
+            //setCalories(data.calories)
+            //Alert.alert(JSON.stringify(data));
+            //Alert.alert(JSON.stringify(products));
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            Alert.alert(error.message)
+          }
+        } 
+      }
+
+    //Alert.alert(JSON.stringify(productsCollection));
     //const productsCollection = await supabase.from('products').select('*')
     return (
         <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
@@ -30,9 +60,11 @@ export default function RecipesScreen(){
             
         </View>
         <View className="flex-1 items-center justify-center">
-        <View>
-
-            </View>
+        <FlatList
+            data={productName}
+            keyExtractor={item => item.id} 
+            renderItem={({item}) => <Text>{item.name} - {item.calories}</Text>}
+  />
         </View>
     </SafeAreaView>
     )

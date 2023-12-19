@@ -3,7 +3,7 @@ import { appSchema, tableSchema } from '@nozbe/watermelondb'
 export default appSchema({
   version: 1,
   tables: [
-/*    tableSchema({
+   tableSchema({
       name: 'recipes',
       columns: [
         { name: 'created_at', type: 'number' },
@@ -14,7 +14,7 @@ export default appSchema({
         { name: 'directions', type: 'number' },
         { name: 'photoPath', type: 'string' },
       ]
-    }),*/
+    }),
     tableSchema({
       name: 'products',
       columns: [
@@ -27,7 +27,7 @@ export default appSchema({
         { name: 'category_id', type: 'string' },
       ]
     }),
-    /**tableSchema({
+    tableSchema({
       name: 'ingredients',
       columns: [
         { name: 'created_at', type: 'number' },
@@ -44,6 +44,6 @@ export default appSchema({
         { name: 'created_at', type: 'number' },
         { name: 'name', type: 'string'},
       ]
-    }), */
+    }), 
   ]
 })

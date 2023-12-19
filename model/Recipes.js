@@ -16,7 +16,7 @@ export default class Recipes extends Model{
   @field('photoPath') photoPath;
   @children('ingredients') ingredients
 
-
+/*
   // Actions ---------------
   @action async getRecipe() {
       return {
@@ -28,6 +28,6 @@ export default class Recipes extends Model{
           photoPath: this.photoPath,
           ingredients: this.ingredients,
       };
-  }
+  }*/
 
 };
