@@ -4,15 +4,26 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import WelcomeScreen from '../screens/WelcomeScreen'
+import LoginScreen from '../screens/LoginScreen'
 import PlannerScreen from '../screens/PlannerScreen';
 import RecipesScreen from '../screens/RecipesScreen';
 import ListScreen from '../screens/ListScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 
 
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
+
+function RecipeNavigator(){
+return(
+  <Stack.Navigator initialRouteName='Recipes' screenOptions={{headerShown:false}}>
+    <Stack.Screen name="Recipes" component={RecipesScreen} />
+    <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+  </Stack.Navigator>
+)
+}
 
 function TabNavigator(){
 {       
@@ -35,7 +46,7 @@ function TabNavigator(){
         <Ionicons name='calendar-sharp' color={color} size={size} />
       )
     }}/>
-    <Tab.Screen name="Recipes" component={RecipesScreen} options={{
+    <Tab.Screen name="RecipeNavigator" component={RecipeNavigator} options={{
       tabBarShowLabel: false,
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name="pot-steam-outline" size={size} color={color} />
@@ -62,6 +73,7 @@ export default function Navigation(){
         <NavigationContainer>
         <Stack.Navigator initialRouteName='Welcome' screenOptions={{headerShown:false}}>
           <Stack.Screen name="Welcome" component={WelcomeScreen}/>
+          <Stack.Screen name="Login" component={LoginScreen}/>
           <Stack.Screen name="App" component={TabNavigator} />
         </Stack.Navigator>
 

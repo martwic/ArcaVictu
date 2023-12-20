@@ -69,5 +69,5 @@ export default function App() {
 }
 
 async function mySync(){
-  syncProvider();
+  //syncProvider();
 }

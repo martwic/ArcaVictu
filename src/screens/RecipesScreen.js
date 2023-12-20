@@ -13,27 +13,25 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { Input } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
 
 export default function RecipesScreen(){
-
+  const navigation = useNavigation();
     //const database = useDatabase()
     
     useEffect(() => {
       getProducts()
       })
-    const [productName, setProductName] = useState('')
+    const [recipes, setRecipes] = useState('')
     //const [calories, setCalories] = useState('')
     async function getProducts() {
         try {
-          const { data, error, status } = await supabase.from('products').select(`name, calories`)
+          const { data, error, status } = await supabase.from('recipes').select(`*`)
           if (error && status !== 406) {
             throw error
           }
           if (data) {
-            setProductName(data)
-            //setCalories(data.calories)
-            //Alert.alert(JSON.stringify(data));
-            //Alert.alert(JSON.stringify(products));
+            setRecipes(data)
           }
         } catch (error) {
           if (error instanceof Error) {
@@ -61,9 +59,9 @@ export default function RecipesScreen(){
         </View>
         <View className="flex-1 items-center justify-center">
         <FlatList
-            data={productName}
+            data={recipes}
             keyExtractor={item => item.id} 
-            renderItem={({item}) => <Text>{item.name} - {item.calories}</Text>}
+            renderItem={({item}) => <Text lassName="font-['Gothic'] font-bold" style={{fontSize:hp(3)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>{item.name}</Text>}
   />
         </View>
     </SafeAreaView>
