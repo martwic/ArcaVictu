@@ -6,7 +6,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 export default function WelcomeScreen(){
     const navigation = useNavigation();
     useEffect(()=>{
-        setTimeout(()=>navigation.navigate('App'), 2500)
+        setTimeout(()=>navigation.navigate('Login'), 2500)
     },[])
     return (
             <View  className="flex-1 justify-center items-center bg-[#FFF6DC]">

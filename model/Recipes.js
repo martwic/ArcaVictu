@@ -1,4 +1,4 @@
-import { Model} from '@nozbe/watermelondb'
+/*import { Model} from '@nozbe/watermelondb'
 import {field, date, children, action, readonly} from '@nozbe/watermelondb/decorators';
 
 export default class Recipes extends Model{
@@ -30,4 +30,4 @@ export default class Recipes extends Model{
       };
   }*/
 
-};
+//};

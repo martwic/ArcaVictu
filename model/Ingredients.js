@@ -1,4 +1,4 @@
-import { appSchema, tableSchema } from '@nozbe/watermelondb'
+/*import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 import { Model} from '@nozbe/watermelondb'
 import {field, date, children, action, readonly} from '@nozbe/watermelondb/decorators';
@@ -20,4 +20,4 @@ export default class Products extends Model{
          // products: this.products,
      // };
  // }
-};
+};*/

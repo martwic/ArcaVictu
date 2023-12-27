@@ -1,5 +1,5 @@
-import { Database } from "@nozbe/watermelondb";
-import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
+/*import { Database } from "@nozbe/watermelondb";
+//import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 import migrations from "./migrations";
 import  FoodCategories  from "./FoodCategories";
 import  Ingredients  from "./Ingredients";
@@ -27,4 +27,4 @@ const adapter = new SQLiteAdapter({
     actionsEnabled:true,
   })
 
-  export {databaseWatermelon};
+  export {databaseWatermelon};*/

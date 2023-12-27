@@ -1,15 +1,14 @@
 import 'react-native-url-polyfill/auto'
 import React, { useState, useEffect } from 'react'
-import { Alert, Pressable, StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View,Pressable } from 'react-native'
 import { supabase } from '../constants'
 import { Button, Input, Text } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -24,25 +23,25 @@ export default function Login() {
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
-    if(session!=null && session.user!=null){
-      navigation.navigate('App');
-  }
   }, [])
-  async function signInWithEmail() {
+
+  async function signUpWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
     })
 
     if (error) Alert.alert(error.message)
-    else{
-      navigation.navigate('App')}
+    if (!session) Alert.alert('Please check your inbox for email verification!')
     setLoading(false)
   }
   return (
-<SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
-    <View className=" w-full p-2 items-center">
+    <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
+    <View className="w-full p-2 items-center">
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
@@ -65,12 +64,10 @@ export default function Login() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Zaloguj" buttonStyle={styles.button} disabled={loading} onPress={() => signInWithEmail()} />
+        <Button  buttonStyle={styles.button} title="Zarejestruj" disabled={loading} onPress={() => signUpWithEmail()}/>
       </View>
-      <View>
-      <Text style={{fontSize:hp(2)}}>Nie masz konta?</Text>
-      <Text className='font-bold' style={{fontSize:hp(2.5)}} onPress={() => navigation.navigate('Register')}>Zarejestruj się</Text>
-      </View>
+      <Text style={{fontSize:hp(2)}}>Masz konto?</Text>
+      <Text className='font-bold' style={{fontSize:hp(2.5)}} onPress={() =>  navigation.navigate('Login')}>Zaloguj się</Text>
     </View>
     </SafeAreaView>
   )

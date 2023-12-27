@@ -1,4 +1,4 @@
-import { SyncDatabaseChangeSet, synchronize } from '@nozbe/watermelondb/sync'
+/*import { SyncDatabaseChangeSet, synchronize } from '@nozbe/watermelondb/sync'
 import { supabase } from '../src/constants';
 import { databaseWatermelon } from '../model/database';
 
@@ -23,4 +23,4 @@ await synchronize({
   sendCreatedAsUpdated: true,
   migrationsEnabledAtVersion: 1,
 })
-}
+}*/

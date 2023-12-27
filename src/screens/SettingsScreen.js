@@ -7,8 +7,13 @@ import { supabase } from '../constants';
 import { StyleSheet, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
+import { useNavigation } from '@react-navigation/native';
 
 export default function SettingsScreen({ session}){
+  async function signOut(){
+    await supabase.auth.signOut()
+    const navigation = useNavigation();
+  }
     /*useEffect(() => {
         if (session) getProfile()
       }, [session])
@@ -47,6 +52,7 @@ export default function SettingsScreen({ session}){
             <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Preferencje</Text>
         </View>
         <View className="flex-1 items-center justify-center">
+        <Button onPress={()=>signOut()}/>
         </View>
     </SafeAreaView>
     )

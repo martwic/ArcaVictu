@@ -5,8 +5,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { AntDesign } from '@expo/vector-icons';
 import Products from '../../model/Products';
-import { databaseWatermelon } from '../../model/database';
-import { useDatabase } from '@nozbe/watermelondb/react'
+//import { databaseWatermelon } from '../../model/database';
+//import { useDatabase } from '@nozbe/watermelondb/react'
 import { FlatList } from 'react-native';
 import { supabase } from '../constants';
 import { useState } from 'react';

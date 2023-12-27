@@ -9,6 +9,7 @@ import PlannerScreen from '../screens/PlannerScreen';
 import RecipesScreen from '../screens/RecipesScreen';
 import ListScreen from '../screens/ListScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 
@@ -74,6 +75,7 @@ export default function Navigation(){
         <Stack.Navigator initialRouteName='Welcome' screenOptions={{headerShown:false}}>
           <Stack.Screen name="Welcome" component={WelcomeScreen}/>
           <Stack.Screen name="Login" component={LoginScreen}/>
+          <Stack.Screen name="Register" component={RegisterScreen}/>
           <Stack.Screen name="App" component={TabNavigator} />
         </Stack.Navigator>
 
