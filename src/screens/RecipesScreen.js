@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, BackHandler } from 'react-native';
+import { View, Text, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
@@ -12,8 +12,9 @@ import { supabase } from '../constants';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
-import { Input } from 'react-native-elements';
+import { Input, Image } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-virtualized-view'
 
 export default function RecipesScreen(){
   const navigation = useNavigation();
@@ -24,9 +25,11 @@ export default function RecipesScreen(){
       })
     const [recipes, setRecipes] = useState('')
     //const [calories, setCalories] = useState('')
+    
     async function getProducts() {
         try {
           const { data, error, status } = await supabase.from('recipes').select(`*`)
+          
           if (error && status !== 406) {
             throw error
           }
@@ -59,9 +62,17 @@ export default function RecipesScreen(){
         </View>
         <View className="flex-1 items-center justify-center">
         <FlatList
+            numColumns={2}
+            scrollEnabled
             data={recipes}
             keyExtractor={item => item.id} 
-            renderItem={({item}) => <Text lassName="font-['Gothic'] font-bold" style={{fontSize:hp(3)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>{item.name}</Text>}
+            renderItem={({item}) => 
+            <View style={{backgroundColor:'white', margin:hp(1), width: wp(43)}}>
+              <Image style={{height:hp(20)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})} source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/render/image/public/recipes/`+item.id+`.jpg`}}/>
+              <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
+                {item.name}
+                </Text>
+              </View>}
   />
         </View>
     </SafeAreaView>

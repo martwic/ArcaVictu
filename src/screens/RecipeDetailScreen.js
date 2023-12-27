@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, BackHandler, StyleSheet} from 'react-native';
+import { View, Text,  BackHandler, StyleSheet} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
@@ -16,6 +16,8 @@ import { Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-elements';
 import InputSpinner from "react-native-input-spinner";
+import { Ionicons } from '@expo/vector-icons'; 
+import { ScrollView } from 'react-native-virtualized-view'
 
 export default function RecipeDetailScreen(props) {
     let item = props.route.params;
@@ -50,32 +52,33 @@ export default function RecipeDetailScreen(props) {
         <View className="bg-[#FFC6AC] w-full p-2 items-center">
             <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Przepisy</Text>
         </View>
-        <View className="items-center justify-center">
-        </View>
-        <View className="flex-1">
-            <View>
-            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>{item.name}</Text>
-            <Text>Czas przygotowania: {item.preparationTime}'</Text>
-            <Text>Liczba porcji:
-            <InputSpinner
-	max={50}
-	min={1}
-	step={1}
-	value={portions}
-	onChange={(num) => {
-		setPortions(num);
-	}}
-/></Text>
-            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(2)}}>Składniki:</Text>
+        <ScrollView className="flex-1 p-2">
+            
+            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(4)}}>{item.name}</Text>
+            <View className="items-center justify-center flex-row">
+            <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><Ionicons name="md-timer-outline" size={24} color="black" /> {item.preparationTime}'</Text>
+            <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}>
+            <InputSpinner height={hp(4)}  inputStyle={{fontSize:hp(2.5)}} 
+            max={50}
+            min={1}
+            step={1}
+            value={portions}
+            onChange={(num) => {
+              setPortions(num);
+            }}
+            /></Text>
+            </View><View>
+            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Składniki:</Text>
             <FlatList
+            ListEmptyComponent={null}
             data={recipe}
             keyExtractor={item => item.id} 
-            renderItem={({item}) => <Text>{item.products.name} - {item.amount*portions} {item.measure=='ml' || item.measure=='g'? '': "x "}{item.measure}</Text>}
+            renderItem={({item}) => <Text style={{fontSize:hp(2.2)}}>{item.products.name} - {item.amount*portions} {item.measure=='ml' || item.measure=='g'? '': "x "}{item.measure}</Text>}
             />
-            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(2)}}>Opis:</Text>
-            <Text>{item.directions}</Text>
+            <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Opis:</Text>
+            <Text style={{fontSize:hp(2.2)}}>{item.directions}</Text>
             </View>
-        </View>
+        </ScrollView>
         <View className="flex-row items-center">
                 <Button buttonStyle={styles.button} onPress={()=> navigation.navigate('Recipes')} title='Wróć' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
             </View>
