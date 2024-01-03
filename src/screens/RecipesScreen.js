@@ -1,39 +1,41 @@
-import React from 'react';
-import { View, Text, BackHandler } from 'react-native';
+import React, {useContext} from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { AntDesign } from '@expo/vector-icons';
-import Products from '../../model/Products';
-//import { databaseWatermelon } from '../../model/database';
-//import { useDatabase } from '@nozbe/watermelondb/react'
 import { FlatList } from 'react-native';
 import { supabase } from '../constants';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
-import { Input, Image } from 'react-native-elements';
+import { Input, Image, Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-virtualized-view'
+import { PageContext } from '../constants/pageContext';
+
 
 export default function RecipesScreen(){
+
   const navigation = useNavigation();
-  const [session, setSession] = useState(null)
-  const [userId, setUserId] = useState(null)
+  //const [session, setSession] = useState(null)
+  //const [userId, setUserId] = useState(null)
+  const [userId] = useContext(PageContext);
   const [recipes, setRecipes] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
     useEffect(() => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session)
-        setUserId(session.user.id)
-      })
-      getProducts()
-      })
+      //supabase.auth.getSession().then(({ data: { session } }) => {
+      //  setSession(session)
+      //  setUserId(session.user.id)
+      //})
+      setSelectedIndex(0)
+      getRecipes()
+    }, []); 
 
-    async function getProducts() {
+    async function getRecipes() {
         try {
-          let query = supabase.from('recipes').select(`*`)
-          if(selectedIndex==1){
+          let query = supabase.from('recipes').select(`id, name, preparationTime, waitingTime, durability, directions, account_id`)
+          if(selectedIndex===1){
             query=query.eq('account_id', userId)
           }
           
@@ -69,13 +71,15 @@ export default function RecipesScreen(){
             selectedIndex={selectedIndex}
             onPress={(value) => {
               setSelectedIndex(value);
-              getProducts()
+              getRecipes()
             }}
             //buttons={['Wszystkie', 'Ulubione', 'Własne']}
             />
             
         </View>
         <View className="flex-1 items-center justify-center">
+          <Text>{selectedIndex}</Text>
+          <Text>{userId}</Text>
         <FlatList
             numColumns={2}
             scrollEnabled
@@ -89,7 +93,17 @@ export default function RecipesScreen(){
                 </Text>
               </View>}
   />
+          <View className="flex-row items-center">
+                <Button buttonStyle={styles.button} onPress={()=> navigation.navigate('AddRecipe')} title='Dodaj przepis' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+            </View>
         </View>
     </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#b1ae95',
+    width: wp(100),
+  },
+})

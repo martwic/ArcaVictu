@@ -1,18 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState, useContext }  from 'react';
 import { View, Text, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { supabase } from '../constants'
+import { PageContext } from '../constants/pageContext';
 
 export default function WelcomeScreen(){
     const navigation = useNavigation();
     const [session, setSession] = useState(null)
+    const [userId, setUserId] = useContext(PageContext);
     var screen = 'Login'
     useEffect(()=>{
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session)
             if(session!=null && session.user!=null){
                 screen = 'App'
+                setUserId(session.user.id)
           }
           })
         setTimeout(()=>navigation.navigate(screen), 2500)

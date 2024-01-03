@@ -1,5 +1,5 @@
 import 'react-native-url-polyfill/auto'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Alert, Pressable, StyleSheet, View } from 'react-native'
 import { supabase } from '../constants'
 import { Button, Input, Text } from 'react-native-elements'
@@ -8,9 +8,10 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { PageContext } from '../constants/pageContext'
 
 export default function Login() {
-
+  const [userId, setUserId] = useContext(PageContext);
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,13 +22,15 @@ export default function Login() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if(session!=null && session.user!=null){
-        navigation.navigate('App');
-    }
+      setUserId(session.user.id)
+      //if(session!=null && session.user!=null){
+        //navigation.navigate('App');
+    //}
     })
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      setUserId(session.user.id)
       if(session!=null && session.user!=null){
         navigation.navigate('App');
     }
@@ -42,9 +45,6 @@ export default function Login() {
     })
 
     if (error) Alert.alert(error.message)
-    else{
-      //navigation.navigate('App')
-    }
     setLoading(false)
   }
   return (

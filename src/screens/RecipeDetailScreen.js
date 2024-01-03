@@ -12,9 +12,8 @@ import { supabase } from '../constants';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
-import { Input } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
 import InputSpinner from "react-native-input-spinner";
 import { Ionicons } from '@expo/vector-icons'; 
 import { ScrollView } from 'react-native-virtualized-view'
@@ -30,7 +29,7 @@ export default function RecipeDetailScreen(props) {
     const getRecipeData = async ()=>{
         try {
             const { data, error, status } = await supabase.from('ingredients')
-            .select(`recipes(name, preparationTime, directions),products(name), amount, measure`)
+            .select(`recipes(name, preparationTime, directions, account_id),products(name), amount, measure`)
             .eq('recipe_id',item.id)
             if (error && status !== 406) {
               throw error

@@ -10,6 +10,7 @@ import RecipesScreen from '../screens/RecipesScreen';
 import ListScreen from '../screens/ListScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import AddRecipeScreen from '../screens/AddRecipeScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 
@@ -21,6 +22,7 @@ function RecipeNavigator(){
 return(
   <Stack.Navigator initialRouteName='Recipes' screenOptions={{headerShown:false}}>
     <Stack.Screen name="Recipes" component={RecipesScreen} />
+    <Stack.Screen name="AddRecipe" component={AddRecipeScreen} />
     <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
   </Stack.Navigator>
 )
