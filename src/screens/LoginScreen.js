@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default function Login() {
+
+  
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,14 +21,18 @@ export default function Login() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
+      if(session!=null && session.user!=null){
+        navigation.navigate('App');
+    }
     })
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      if(session!=null && session.user!=null){
+        navigation.navigate('App');
+    }
     })
-    if(session!=null && session.user!=null){
-      navigation.navigate('App');
-  }
+
   }, [])
   async function signInWithEmail() {
     setLoading(true)
@@ -37,7 +43,8 @@ export default function Login() {
 
     if (error) Alert.alert(error.message)
     else{
-      navigation.navigate('App')}
+      //navigation.navigate('App')
+    }
     setLoading(false)
   }
   return (

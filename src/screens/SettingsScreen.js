@@ -1,18 +1,42 @@
 import React from 'react';
-import { View, Text, ScrollView, BackHandler } from 'react-native';
+import { View, Text, ScrollView, BackHandler, NativeModules } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useState, useEffect } from 'react'
 import { supabase } from '../constants';
 import { StyleSheet, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
-import { Session } from '@supabase/supabase-js'
-import { useNavigation } from '@react-navigation/native';
 
-export default function SettingsScreen({ session}){
+export default function SettingsScreen(){
+  const [session, setSession] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [userEmail, setUserEmail] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setUserId(session.user.id)
+      setUserEmail(session.user.email)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      if(session!=null){
+        setUserId(session.user.id)
+      }
+      else{
+        setUserId(null)
+      }
+
+    })
+    if(session!=null && session.user!=null){
+      navigation.navigate('App');
+  }
+  }, [])
   async function signOut(){
     await supabase.auth.signOut()
-    const navigation = useNavigation();
+    NativeModules.DevSettings.reload();
+
   }
     /*useEffect(() => {
         if (session) getProfile()
@@ -52,8 +76,18 @@ export default function SettingsScreen({ session}){
             <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Preferencje</Text>
         </View>
         <View className="flex-1 items-center justify-center">
-        <Button onPress={()=>signOut()}/>
+        
+        <Text>{userEmail}</Text>
+        <Text>{userId}</Text>
+
+        <Button title="Wyloguj" buttonStyle={styles.button} onPress={()=>signOut()}/>
         </View>
     </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#b1ae95',
+  },
+})

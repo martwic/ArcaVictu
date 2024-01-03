@@ -1,12 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect }  from 'react';
+import React, { useEffect, useState }  from 'react';
 import { View, Text, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { supabase } from '../constants'
 
 export default function WelcomeScreen(){
     const navigation = useNavigation();
+    const [session, setSession] = useState(null)
+    var screen = 'Login'
     useEffect(()=>{
-        setTimeout(()=>navigation.navigate('Login'), 2500)
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session)
+            if(session!=null && session.user!=null){
+                screen = 'App'
+          }
+          })
+        setTimeout(()=>navigation.navigate(screen), 2500)
     },[])
     return (
             <View  className="flex-1 justify-center items-center bg-[#FFF6DC]">

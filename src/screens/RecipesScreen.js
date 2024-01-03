@@ -18,18 +18,27 @@ import { ScrollView } from 'react-native-virtualized-view'
 
 export default function RecipesScreen(){
   const navigation = useNavigation();
-    //const database = useDatabase()
-    
+  const [session, setSession] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [recipes, setRecipes] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(0)
     useEffect(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session)
+        setUserId(session.user.id)
+      })
       getProducts()
       })
-    const [recipes, setRecipes] = useState('')
-    //const [calories, setCalories] = useState('')
-    
+
     async function getProducts() {
         try {
-          const { data, error, status } = await supabase.from('recipes').select(`*`)
+          let query = supabase.from('recipes').select(`*`)
+          if(selectedIndex==1){
+            query=query.eq('account_id', userId)
+          }
           
+          const { data, error, status } = await query
+
           if (error && status !== 406) {
             throw error
           }
@@ -56,7 +65,13 @@ export default function RecipesScreen(){
                 <AntDesign name="filter" color={"grey"} size={hp(3.5)}/>
             </View>
             <ButtonGroup 
-            buttons={['Wszystkie', 'Ulubione', 'Własne']}
+            buttons={['Wszystkie',  'Własne']}
+            selectedIndex={selectedIndex}
+            onPress={(value) => {
+              setSelectedIndex(value);
+              getProducts()
+            }}
+            //buttons={['Wszystkie', 'Ulubione', 'Własne']}
             />
             
         </View>
