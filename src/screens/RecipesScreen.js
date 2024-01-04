@@ -1,17 +1,12 @@
-import React, {useContext} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useContext, useState, useEffect} from 'react';
+import { View, Text, StyleSheet, Alert, FlatList  } from 'react-native';
+import { Input, Image, Button } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { AntDesign } from '@expo/vector-icons';
-import { FlatList } from 'react-native';
 import { supabase } from '../constants';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { Alert } from 'react-native';
-import { Input, Image, Button } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-virtualized-view'
 import { PageContext } from '../constants/pageContext';
 
 
@@ -22,6 +17,8 @@ export default function RecipesScreen(){
   //const [userId, setUserId] = useState(null)
   const [userId] = useContext(PageContext);
   const [recipes, setRecipes] = useState('')
+  const [recipesList, setRecipesList] = useState('')
+  const [search, setSearch] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
     useEffect(() => {
       //supabase.auth.getSession().then(({ data: { session } }) => {
@@ -34,11 +31,7 @@ export default function RecipesScreen(){
 
     async function getRecipes() {
         try {
-          let query = supabase.from('recipes').select(`id, name, preparationTime, waitingTime, durability, directions, account_id`)
-          if(selectedIndex===1){
-            query=query.eq('account_id', userId)
-          }
-          
+          let query = supabase.from('recipes').select(`id, name, preparationTime, waitingTime, durability, directions, account_id`)          
           const { data, error, status } = await query
 
           if (error && status !== 406) {
@@ -46,6 +39,7 @@ export default function RecipesScreen(){
           }
           if (data) {
             setRecipes(data)
+            setRecipesList(data)
           }
         } catch (error) {
           if (error instanceof Error) {
@@ -54,8 +48,30 @@ export default function RecipesScreen(){
         } 
       }
 
+      const filterOwns = (item) => {
+        if(item==1){
+          let filtered = recipes.filter((recipe)=>recipe.account_id==userId)
+          setRecipesList(filtered)
+          //setRecipesList(null)
+        }
+        else{
+          let filtered = recipes.filter((recipe)=>(recipe.account_id==userId || recipe.account_id==null))
+          setRecipesList(filtered)
+        }
+      }
+      const filterData = (item) => {
+        if(item.length>2){
+          let filtered = recipes.filter((recipe)=>recipe.name.toLowerCase().includes(item.toLowerCase()))
+          setRecipesList(filtered)
+        }
+        else{
+          setRecipesList(recipes)
+        }
+      }
+
     //Alert.alert(JSON.stringify(productsCollection));
     //const productsCollection = await supabase.from('products').select('*')
+    //<AntDesign name="filter" color={"grey"} size={hp(3.5)}/>
     return (
         <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
         <View className="bg-[#FFC6AC] w-full p-2 items-center">
@@ -63,27 +79,27 @@ export default function RecipesScreen(){
         </View>
         <View className="items-center justify-center">
         <View className="flex-row items-center">
-                <SearchBar round containerStyle={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
-                <AntDesign name="filter" color={"grey"} size={hp(3.5)}/>
+                <SearchBar  onChangeText={
+                  (text) => {setSearch(text)
+                    filterData(text)
+                    }} value={search} round containerStyle={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
             </View>
             <ButtonGroup 
             buttons={['Wszystkie',  'Własne']}
             selectedIndex={selectedIndex}
             onPress={(value) => {
               setSelectedIndex(value);
-              getRecipes()
+              filterOwns(value);
             }}
             //buttons={['Wszystkie', 'Ulubione', 'Własne']}
             />
             
         </View>
         <View className="flex-1 items-center justify-center">
-          <Text>{selectedIndex}</Text>
-          <Text>{userId}</Text>
         <FlatList
             numColumns={2}
             scrollEnabled
-            data={recipes}
+            data={recipesList}
             keyExtractor={item => item.id} 
             renderItem={({item}) => 
             <View style={{backgroundColor:'white', margin:hp(1), width: wp(43)}}>
