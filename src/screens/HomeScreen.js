@@ -10,10 +10,17 @@ export default function HomeScreen(){
     var date = new Date;
     var days = ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'];
     var day = days[date.getDay()]
+
+    const getCurrentDate=()=>{
+ 
+        var date = new Date().getDate();
+        var month = new Date().getMonth() + 1;
+        return(month>9 ? date + '.' + month : date + '.0' + month );
+  }
     return (
         <SafeAreaView className="flex-1 justify-center items-center bg-[#FFF6DC]">
                 <View className="bg-[#FFC6AC] w-full p-2 items-center">
-                    <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>{date.getDay()}.{date.getMonth()}  {day}</Text>
+                    <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>{getCurrentDate()} {day}</Text>
                 </View>
                 <View className="flex-1">
                     <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Gotowanie</Text>

@@ -1,16 +1,17 @@
 import 'react-native-url-polyfill/auto'
 import React, { useState, useEffect, useContext } from 'react'
-import { Alert, Pressable, StyleSheet, View, ScrollView } from 'react-native'
+import { Alert, Pressable, StyleSheet, View, ScrollView, TextInput  } from 'react-native'
 import { supabase } from '../constants'
-import { Button, Input, Text } from 'react-native-elements'
+import { Button, Input, Text} from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext'
-
-export default function Login() {
+import InputSpinner from 'react-native-input-spinner'
+import { padding } from 'aes-js'
+export default function AddRecipe() {
   const navigation = useNavigation();
 
   //const [session, setSession] = useState(null)
@@ -62,40 +63,55 @@ export default function Login() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Czas przygotowania"
-          disabled={loading}
-          onChangeText={(text) => setRecipePrepTime(text)}
-          value={recipePrepTime}
-          keyboardType="numeric"
-        />
+        <Text className="font-bold text-[#7F8D9A] p-3" style={{fontSize:hp(2)}}>Czas oczekiwania</Text>
+        <InputSpinner height={hp(4)} width={wp(90)} inputStyle={{fontSize:hp(2)}} 
+            color='#FFC6AC'
+            max={600}
+            min={0}
+            step={5}
+            value={recipePrepTime}
+            onChange={(num) => {
+              setRecipePrepTime(num);
+            }}
+            />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Text className="font-bold text-[#7F8D9A] p-3" style={{fontSize:hp(2)}}>Czas oczekiwania</Text>
+        <InputSpinner height={hp(4)} width={wp(90)} inputStyle={{fontSize:hp(2)}} 
+            color='#FFC6AC'
+            max={600}
+            min={0}
+            step={5}
+            value={recipeWaitTime}
+            onChange={(num) => {
+              setRecipeWaitTime(num);
+            }}
+            />
       </View>  
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Czas oczekiwania"
-          disabled={loading}
-          onChangeText={(text) => setRecipeWaitTime(text)}
-          value={recipeWaitTime}
-          keyboardType="numeric"
-        />
+        <Text className="font-bold text-[#7F8D9A] p-3" style={{fontSize:hp(2)}}>Trwałość w dniach</Text>
+        <InputSpinner height={hp(4)} width={wp(90)} inputStyle={{fontSize:hp(2)}} 
+            color='#FFC6AC'
+            max={14}
+            min={1}
+            step={1}
+            value={recipeDurability}
+            onChange={(num) => {
+              setRecipeDurability(num);
+            }}
+            />
       </View>  
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Trwałość"
-          disabled={loading}
-          onChangeText={(text) => setRecipeDurability(text)}
-          value={recipeDurability}
-          keyboardType="numeric"
-        />
-      </View>  
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Opis"
-          disabled={loading}
-          //leftIcon={{ type: 'font-awesome', name: 'home' }}
-          onChangeText={(text) => setRecipeDirections(text)}
-          value={recipeDirections}
-        />
+      <Text className="font-bold text-[#7F8D9A] p-3" style={{fontSize:hp(2)}}>Opis</Text>
+      <TextInput 
+        editable
+        multiline
+        numberOfLines={4}
+        maxLength={2000}
+        onChangeText={text => setRecipeDirections(text)}
+        value={recipeDirections}
+        style={{padding: 10, backgroundColor:'white'}}
+      />
       </View>  
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button title="Dodaj" buttonStyle={styles.button} disabled={loading} onPress={() => addRecipe()} />

@@ -5,8 +5,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { AntDesign } from '@expo/vector-icons';
 import Products from '../../model/Products';
-//import { databaseWatermelon } from '../../model/database';
-//import { useDatabase } from '@nozbe/watermelondb/react'
 import { FlatList } from 'react-native';
 import { supabase } from '../constants';
 import { useState } from 'react';
@@ -44,8 +42,6 @@ export default function RecipeDetailScreen(props) {
           } 
     }
 
-    //Alert.alert(JSON.stringify(recipe));
-    //const productsCollection = await supabase.from('products').select('*')
     return (
         <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
         <View className="bg-[#FFC6AC] w-full p-2 items-center">
@@ -57,7 +53,8 @@ export default function RecipeDetailScreen(props) {
             <View className="items-center justify-center flex-row">
             <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><Ionicons name="md-timer-outline" size={24} color="black" /> {item.preparationTime}'</Text>
             <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}>
-            <InputSpinner height={hp(4)}  inputStyle={{fontSize:hp(2.5)}} 
+            <InputSpinner height={hp(5)}  inputStyle={{fontSize:hp(2.5)}} 
+            color='#FFC6AC'
             max={50}
             min={1}
             step={1}

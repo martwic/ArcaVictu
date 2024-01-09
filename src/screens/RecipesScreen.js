@@ -28,6 +28,12 @@ export default function RecipesScreen(){
       setSelectedIndex(0)
       getRecipes()
     }, []); 
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        getRecipes()
+      });
+      return unsubscribe;
+    }, [navigation]);
 
     async function getRecipes() {
         try {
