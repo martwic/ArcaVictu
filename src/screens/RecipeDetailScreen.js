@@ -1,15 +1,9 @@
-import React from 'react';
-import { View, Text,  BackHandler, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text,  BackHandler, StyleSheet, Alert, FlatList} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
-import { AntDesign } from '@expo/vector-icons';
-import Products from '../../model/Products';
-import { FlatList } from 'react-native';
 import { supabase } from '../constants';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import InputSpinner from "react-native-input-spinner";
@@ -63,12 +57,16 @@ export default function RecipeDetailScreen(props) {
               setPortions(num);
             }}
             /></Text>
-            </View><View>
+            <Button buttonStyle={{width:wp(30), backgroundColor: '#b1ae95'}} onPress={()=> navigation.navigate('AddToPlanner')} title='Dodaj do planera' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(20), height:hp(3)}}/>
+            </View>
+            <View>
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Składniki:</Text>
             <FlatList
             ListEmptyComponent={null}
             data={recipe}
-            keyExtractor={item => item.id} 
+            keyExtractor={(item, index) => {
+              return item.id;
+            }}
             renderItem={({item}) => <Text style={{fontSize:hp(2.2)}}>{item.products.name} - {item.amount*portions} {item.measure=='ml' || item.measure=='g'? '': "x "}{item.measure}</Text>}
             />
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Opis:</Text>

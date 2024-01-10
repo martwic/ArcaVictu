@@ -1,6 +1,6 @@
 import 'react-native-url-polyfill/auto'
 import React, { useState, useEffect, useContext } from 'react'
-import { Alert, Pressable, StyleSheet, View, ScrollView, TextInput  } from 'react-native'
+import { Alert, Pressable, StyleSheet, View,  TextInput, FlatList, ScrollView  } from 'react-native'
 import { supabase } from '../constants'
 import { Button, Input, Text} from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
@@ -10,13 +10,18 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext'
 import InputSpinner from 'react-native-input-spinner'
-import { padding } from 'aes-js'
+import MultiSelect from 'react-native-multiple-select';
+import { SearchBar } from '@rneui/themed';
+import { MultipleSelectList } from 'react-native-dropdown-select-list'
+
 export default function AddRecipe() {
   const navigation = useNavigation();
 
-  //const [session, setSession] = useState(null)
-  //const [userId, setUserId] = useState(null)
   const [userId] = useContext(PageContext);
+  const [selected, setSelected] = useState([])
+  const [products, setProducts] = useState('')
+  const [productsList, setProductsList] = useState('')
+  const [selectedProducts, setSelectedProducts] = useState('')
   const [recipeName, setRecipeName] = useState('')
   const [recipePrepTime, setRecipePrepTime] = useState('0')
   const [recipeWaitTime, setRecipeWaitTime] = useState('0')
@@ -26,12 +31,10 @@ export default function AddRecipe() {
   const [ingredientAmount, setIngredientAmount] = useState(ingredientWeight)
   const [ingredientMeasure, setIngredientMeasure] = useState('g')
   const [loading, setLoading] = useState(false)
-/*  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUserId(session.user.id)
-    })
-  }, []) */
+  const [search, setSearch] = useState('')
+  useEffect(() => {
+    getProducts()
+  }, []);
   async function addRecipe() {
     setLoading(true)
     const { error } = await supabase.from('recipes').insert({ 
@@ -48,7 +51,51 @@ export default function AddRecipe() {
     }
     setLoading(false)
   }
+  async function getProducts() {
+    try {
+      let query = supabase.from('products').select(`id, name`)          
+      const { data, error, status } = await query
 
+      if (error && status !== 406) {
+        throw error
+      }
+      if (data) {
+        setProducts(data)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } 
+  }
+  const filterData = (item) => {
+    if(item.length>2){
+      let filtered = products.filter((product)=>product.name.toLowerCase().includes(item.toLowerCase()))
+      setProductsList(filtered)
+    }
+  }
+
+
+  //state = {
+  // selectedItems : []
+  //};
+ 
+  
+  onSelectedItemsChange = selectedItems => {
+    setSelected(selectedItems);
+  };
+  //arrayProducts = Object.keys(products).map(function(k) {
+  //  return products[k];
+  //});
+  const items = [
+    {key:'1', value:'Mobiles', disabled:true},
+    {key:'2', value:'Appliances'},
+    {key:'3', value:'Cameras'},
+    {key:'4', value:'Computers', disabled:true},
+    {key:'5', value:'Vegetables'},
+    {key:'6', value:'Diary Products'},
+    {key:'7', value:'Drinks'},
+]
   return (
 <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
   <ScrollView className="flex-1 p-2">
@@ -112,9 +159,20 @@ export default function AddRecipe() {
         value={recipeDirections}
         style={{padding: 10, backgroundColor:'white'}}
       />
-      </View>  
+      </View> 
+ <MultipleSelectList 
+        setSelected={(val) => setSelected(val)} 
+        data={Object.keys(products).map(function(k) {
+          return products[k].name;
+        })} 
+        save="key"
+        onSelect={() => alert(selected)} 
+        label="Categories"
+    />
+
+
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Dodaj" buttonStyle={styles.button} disabled={loading} onPress={() => addRecipe()} />
+        <Button title="Dodaj" buttonStyle={{backgroundColor: '#b1ae95'}} disabled={loading} onPress={() => addRecipe()} />
       </View>
       </View>
       </ScrollView>

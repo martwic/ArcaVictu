@@ -21,10 +21,6 @@ export default function RecipesScreen(){
   const [search, setSearch] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
     useEffect(() => {
-      //supabase.auth.getSession().then(({ data: { session } }) => {
-      //  setSession(session)
-      //  setUserId(session.user.id)
-      //})
       setSelectedIndex(0)
       getRecipes()
     }, []); 
