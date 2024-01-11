@@ -57,7 +57,7 @@ export default function RecipeDetailScreen(props) {
               setPortions(num);
             }}
             /></Text>
-            <Button buttonStyle={{width:wp(30), backgroundColor: '#b1ae95'}} onPress={()=> navigation.navigate('AddToPlanner')} title='Dodaj do planera' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(20), height:hp(3)}}/>
+            <Button buttonStyle={{width:wp(30), backgroundColor: '#b1ae95'}} onPress={()=> navigation.navigate('AddToPlanner',{recipeId: item.id})} title='Dodaj do planera' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(20), height:hp(3)}}/>
             </View>
             <View>
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Składniki:</Text>
