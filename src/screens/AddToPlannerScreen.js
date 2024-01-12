@@ -15,7 +15,7 @@ export default function AddToPlannerScreen({route}){
     const [userId] = useContext(PageContext);
     const navigation = useNavigation();
     const[openMultiple, setOpenMultiple] = useState(false)
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const [selected, setSelected] = useState([]);
     const [dishDate, setDishDate] = useState(undefined)
     const [meals, setMeals] = useState([])

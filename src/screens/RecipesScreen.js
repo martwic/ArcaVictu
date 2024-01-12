@@ -89,6 +89,7 @@ export default function RecipesScreen(){
             <ButtonGroup 
             buttons={['Wszystkie',  'Własne']}
             selectedIndex={selectedIndex}
+            selectedButtonStyle={{backgroundColor:'#b1ae95'}}
             onPress={(value) => {
               setSelectedIndex(value);
               filterOwns(value);

@@ -5,11 +5,14 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { PageContext } from '../constants/pageContext';
 import { supabase } from '../constants';
 import { useNavigation } from '@react-navigation/native';
+import { Button} from 'react-native-elements'
 
 export default function HomeScreen(){
     const navigation = useNavigation();
     const[dishesList, setDishes]=useState('');
     const[mealsList, setMeals]=useState('');
+    const[openIngredients, setOpenIngredients]=useState(false);
+    const[openCook, setOpenCook]=useState(false);
     const [userId] = useContext(PageContext);
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -81,7 +84,15 @@ export default function HomeScreen(){
                     <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>{getCurrentDate()} {day}</Text>
                 </View>
                 <View className="flex-1">
-                    <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Gotowanie</Text>
+                    <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Gotowanie</Text>
+                    <View className="items-center justify-center flex-row">
+                    <View className="p-3">
+                    <Button  buttonStyle={{backgroundColor:'#b1ae95', width:wp(40)}} title="Składniki" onPress={() => setOpenIngredients(!openIngredients)} />
+                    </View>
+                    <View className="p-3">
+                    <Button buttonStyle={{backgroundColor:'#b1ae95', width:wp(40)}} title="Gotuj" onPress={() => setOpenCook(!openCook)} />
+                    </View>
+                    </View>
                     <View>
                     <FlatList
                         ListEmptyComponent={null}
@@ -90,18 +101,18 @@ export default function HomeScreen(){
                         keyExtractor={item => item.id} 
                         renderItem={({item}) => 
                         <>
-                            <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
+                            <Text style={{fontSize:hp(2.7),padding:hp(0.5),textDecorationLine:'underline', textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                             {item.name}
                             </Text>
-                            <Text>{item.sum}</Text>
+                            <Text style={{fontSize:hp(2.5),padding:hp(0.5), fontStyle:'italic', textAlign:'center'}}>Ilość porcji: {item.sum}</Text>
                         </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
                         }
-                    />
-                    </View>
+                    />          
+                                </View>
                 </View>
                 <View className="border-b-2 border-[#FFC6AC] w-4/5"/>
                 <View className="flex-1 p-2">
-                    <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3)}}>Jadłospis</Text>
+                    <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Jadłospis</Text>
                     <View>
                     <FlatList
                         ListEmptyComponent={null}
@@ -110,10 +121,10 @@ export default function HomeScreen(){
                         keyExtractor={item => item.id} 
                         renderItem={({item}) => 
                         <>
-                            <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
+                            <Text style={{fontSize:hp(2.7), textDecorationLine:'underline',padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                             {item.dishes.recipes.name}
                             </Text>
-                            <Text>{item.servings}</Text>
+                            <Text style={{fontSize:hp(2.5), fontStyle:'italic',padding:hp(0.5), textAlign:'center'}}>Ilość porcji: {item.servings}</Text>
                         </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
                         }
                     />
