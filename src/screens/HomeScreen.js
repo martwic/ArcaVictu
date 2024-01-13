@@ -1,11 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, Text, ScrollView, BackHandler, FlatList } from 'react-native';
+import { View, Text, ScrollView, BackHandler, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext';
 import { supabase } from '../constants';
 import { useNavigation } from '@react-navigation/native';
 import { Button} from 'react-native-elements'
+import { Ionicons } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen(){
     const navigation = useNavigation();
@@ -63,7 +65,7 @@ export default function HomeScreen(){
     const getDishes = async ()=>{
         try {
             const { data, error, status } = await supabase.from('dishesview')
-            .select('name, preparation_date, sum, account_id')
+            .select('name, preparation_date, sum, account_id, preparationTime, waitingTime')
             .eq('preparation_date',getCurrentDateDatabase())
             .eq('account_id',userId)
             if (error && status !== 406) {
@@ -83,34 +85,6 @@ export default function HomeScreen(){
                 <View className="bg-[#FFC6AC] w-full p-2 items-center">
                     <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>{getCurrentDate()} {day}</Text>
                 </View>
-                <View className="flex-1">
-                    <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Gotowanie</Text>
-                    <View className="items-center justify-center flex-row">
-                    <View className="p-3">
-                    <Button  buttonStyle={{backgroundColor:'#b1ae95', width:wp(40)}} title="Składniki" onPress={() => setOpenIngredients(!openIngredients)} />
-                    </View>
-                    <View className="p-3">
-                    <Button buttonStyle={{backgroundColor:'#b1ae95', width:wp(40)}} title="Gotuj" onPress={() => setOpenCook(!openCook)} />
-                    </View>
-                    </View>
-                    <View>
-                    <FlatList
-                        ListEmptyComponent={null}
-                        scrollEnabled
-                        data={dishesList}
-                        keyExtractor={item => item.id} 
-                        renderItem={({item}) => 
-                        <>
-                            <Text style={{fontSize:hp(2.7),padding:hp(0.5),textDecorationLine:'underline', textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
-                            {item.name}
-                            </Text>
-                            <Text style={{fontSize:hp(2.5),padding:hp(0.5), fontStyle:'italic', textAlign:'center'}}>Ilość porcji: {item.sum}</Text>
-                        </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
-                        }
-                    />          
-                                </View>
-                </View>
-                <View className="border-b-2 border-[#FFC6AC] w-4/5"/>
                 <View className="flex-1 p-2">
                     <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Jadłospis</Text>
                     <View>
@@ -121,15 +95,47 @@ export default function HomeScreen(){
                         keyExtractor={item => item.id} 
                         renderItem={({item}) => 
                         <>
-                            <Text style={{fontSize:hp(2.7), textDecorationLine:'underline',padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
+                            <Text style={{fontSize:hp(2.7), padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                             {item.dishes.recipes.name}
                             </Text>
-                            <Text style={{fontSize:hp(2.5), fontStyle:'italic',padding:hp(0.5), textAlign:'center'}}>Ilość porcji: {item.servings}</Text>
+                            <Text style={{fontSize:hp(2.5), fontStyle:'italic',padding:hp(0.5), textAlign:'center'}}><MaterialCommunityIcons name="bowl-mix-outline" size={24} color="black" />: {item.servings}</Text>
                         </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
                         }
                     />
                     </View>
                 </View>
+                                <View className="border-b-2 border-[#FFC6AC] w-4/5"/>
+                <View className="flex-1">
+                    <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Gotowanie</Text>
+                    <View className="flex-1 p-2" style={{width:wp(100)}}>
+                    <FlatList
+                        ListEmptyComponent={null}
+                        scrollEnabled
+                        data={dishesList}
+                        keyExtractor={item => item.id} 
+                        renderItem={({item}) => 
+                        <>
+                            <Text style={{fontSize:hp(2.7),padding:hp(0.5),textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
+                            {item.name}
+                            </Text>
+                            <View></View>
+                            <Text style={{fontSize:hp(2.5),padding:hp(0.5), textAlign:'center'}}><MaterialCommunityIcons name="bowl-mix-outline" size={24} color="black" />: {item.sum}</Text>
+                            <Text style={{fontSize:hp(2.5), padding:hp(2.5),textAlign:'center'}}><Ionicons name="md-timer-outline" size={24} color="black" />: {item.preparationTime}' + {item.waitingTime}'</Text>
+                        </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
+                        }
+                    />          
+                                </View>
+                </View>
+                <View className="flex-row items-center">
+                <Button buttonStyle={styles.button} onPress={()=>setOpenCook(!openCook)} title='Gotuj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+            </View>
             </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#b1ae95',
+    width: wp(100),
+  },
+})

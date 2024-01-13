@@ -45,7 +45,7 @@ export default function RecipeDetailScreen(props) {
             
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(4)}}>{item.name}</Text>
             <View className="items-center justify-center flex-row">
-            <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><Ionicons name="md-timer-outline" size={24} color="black" /> {item.preparationTime}'</Text>
+            <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><Ionicons name="md-timer-outline" size={24} color="black" /> {item.preparationTime}' + {item.waitingTime}'</Text>
             <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}>
             <InputSpinner height={hp(5)}  inputStyle={{fontSize:hp(2.5)}} 
             color='#FFC6AC'
