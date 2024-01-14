@@ -55,7 +55,6 @@ export default function AddToPlannerScreen({route}){
                 )
 if (error2) Alert.alert(error.message)
 else{
-    Alert.alert("Dodano pomyślnie")
 navigation.navigate('Recipes');
 }
           }
@@ -72,6 +71,7 @@ navigation.navigate('Recipes');
                     <View className="flex-1 bg-[#FFF6DC]">
                     <Text className="font-['Gothic'] font-bold p-5" style={{fontSize:hp(4)}}>Wybierz datę gotowania</Text>
                     <Calendar
+                    minDate={new Date().getDate()}
                     theme={{calendarBackground: 'transparent', todayTextColor:'#b1ae95', arrowColor:'#b1ae95'}}
                     onDayPress={day => {
                         setDishDate(day.dateString);

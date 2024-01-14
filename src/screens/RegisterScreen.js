@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default function Register() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,6 +43,16 @@ export default function Register() {
   return (
     <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
     <View className="w-full p-2 items-center">
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
+          label="Imię"
+          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+          onChangeText={(text) => setName(text)}
+          value={name}
+          placeholder="imię"
+          autoCapitalize={'none'}
+        />
+      </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"

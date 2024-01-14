@@ -43,18 +43,10 @@ export default function SettingsScreen(){
     return (
         <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
         <View className="bg-[#FFC6AC] w-full p-2 items-center">
-            <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Preferencje</Text>
+            <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Konto</Text>
         </View>
         <View className="flex-1 items-center p-2">
-        <ButtonGroup 
-            buttons={['Jem mięso',  'Jestem wege']}
-            selectedIndex={selectedIndex}
-            selectedButtonStyle={{backgroundColor:'#b1ae95'}}
-            onPress={(value) => {
-              setSelectedIndex(value);
-              //filterOwns(value);
-            }}
-            />
+
         <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Email:</Text>
         <Text className="font-['Gothic']p-3" style={{fontSize:hp(3), textAlign:'center'}}>{userEmail}</Text>
         

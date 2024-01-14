@@ -115,12 +115,15 @@ export default function HomeScreen(){
                         keyExtractor={item => item.id} 
                         renderItem={({item}) => 
                         <>
+                        <View className="p-3">
                             <Text style={{fontSize:hp(2.7),padding:hp(0.5),textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                             {item.name}
                             </Text>
-                            <View></View>
-                            <Text style={{fontSize:hp(2.5),padding:hp(0.5), textAlign:'center'}}><MaterialCommunityIcons name="bowl-mix-outline" size={24} color="black" />: {item.sum}</Text>
-                            <Text style={{fontSize:hp(2.5), padding:hp(2.5),textAlign:'center'}}><Ionicons name="md-timer-outline" size={24} color="black" />: {item.preparationTime}' + {item.waitingTime}'</Text>
+                            <View className="flex-row justify-center">
+                            <Text style={{fontSize:hp(2.5),padding:hp(1.5), textAlign:'center'}}><MaterialCommunityIcons name="bowl-mix-outline" size={24} color="black" />: {item.sum}</Text>
+                            <Text style={{fontSize:hp(2.5), padding:hp(1.5),textAlign:'center'}}><Ionicons name="md-timer-outline" size={24} color="black" />: {item.preparationTime}' + {item.waitingTime}'</Text>
+                            </View>
+                            </View>
                         </>//id, dishes(recipes(id, name), account_id), consumption_date, servings
                         }
                     />          
