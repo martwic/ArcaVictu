@@ -94,7 +94,7 @@ export default function RecipesScreen(){
               setSelectedIndex(value);
               filterOwns(value);
             }}
-            //buttons={['Wszystkie', 'Ulubione', 'Własne']}
+            //buttons={['Wszystkie', 'Ulubione', 'Własne']}<Image style={{height:hp(20)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})} source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/render/image/public/recipes/`+item.id+`.jpg`}}/>
             />
             
         </View>
@@ -106,7 +106,8 @@ export default function RecipesScreen(){
             keyExtractor={item => item.id} 
             renderItem={({item}) => 
             <View style={{backgroundColor:'white', margin:hp(1), width: wp(43)}}>
-              <Image style={{height:hp(20)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})} source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/render/image/public/recipes/`+item.id+`.jpg`}}/>
+              
+              <Image style={{height:hp(20)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})} source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/object/public/recipes/`+item.id+`.jpg`}}/>
               <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                 {item.name}
                 </Text>

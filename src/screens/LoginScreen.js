@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext'
+import * as Linking from "expo-linking";
 
 export default function Login() {
   const [userId, setUserId] = useContext(PageContext);
@@ -47,6 +48,16 @@ export default function Login() {
     if (error) Alert.alert(error.message)
     setLoading(false)
   }
+
+  const resetPassword = async () => {
+    const resetPasswordURL = Linking.createURL("/ResetPassword");
+  
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: resetPasswordURL,
+    });
+  
+    return { data, error };
+  };
   return (
 <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
     <View className=" w-full p-2 items-center">
@@ -77,6 +88,9 @@ export default function Login() {
       <View>
       <Text style={{fontSize:hp(2)}}>Nie masz konta?</Text>
       <Text className='font-bold' style={{fontSize:hp(2.5)}} onPress={() => navigation.navigate('Register')}>Zarejestruj się</Text>
+      </View>
+      <View>
+      <Text className='font-bold' style={{fontSize:hp(2.2)}} onPress={() => resetPassword()}>Nie pamiętam hasła</Text>
       </View>
     </View>
     </SafeAreaView>

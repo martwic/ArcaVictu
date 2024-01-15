@@ -1,5 +1,5 @@
 import 'react-native-url-polyfill/auto'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { Alert, Pressable, StyleSheet, View,  TextInput, FlatList, Modal, ScrollView} from 'react-native'
 import { supabase } from '../constants'
 import { Button, Input, Text} from 'react-native-elements'
@@ -10,11 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext'
 import InputSpinner from 'react-native-input-spinner'
-import MultiSelect from 'react-native-multiple-select';
 import { SearchBar } from '@rneui/themed';
-import { MultipleSelectList } from 'react-native-dropdown-select-list'
-import SearchableDropdown from 'react-native-searchable-dropdown';
-//import { ScrollView } from 'react-native-virtualized-view'
+import Dropdown from 'react-native-input-select'
 
 export default function AddRecipe() {
   
@@ -30,12 +27,26 @@ export default function AddRecipe() {
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [ingredients, setIngredients] = useState([])
-  const [open, setOpen] = useState(false)
+  const [categories, setCategories] = useState([])
+  const [productName, setProductName] = useState('')
+  const [productCategory, setProductCategory] = useState(7)
+  const [productKcal, setProductKcal] = useState('')
+  const [productProtein, setProductProtein] = useState('')
+  const [productCarbo, setProductCarbo] = useState('')
+  const [productFats, setProductFats] = useState('')
+  const [openM, setOpen] = useState(false)
+  const [openProduct, setOpenProduct] = useState(false)
+
   let ingredientsToDatabase = [];
   useEffect(() => {
     getProducts()
+    getCategories()
   }, []);
+  
   async function addRecipe() {
+    if(!recipeName)
+    Alert.alert("Niewypełnione pola","Aby zapisać przepis, obowiązkowe jest podanie jego nazwy.")
+    else{
     setLoading(true)
     const { data, error } = await supabase.from('recipes').insert({ 
         name: recipeName,
@@ -51,7 +62,6 @@ export default function AddRecipe() {
         ingredientsToDatabase.push({recipe_id: data.id,  product_id:val.id, weight: parseFloat(val.weight), amount:parseFloat(val.amount), measure:val.measure});
           });
       }
-      console.log(ingredientsToDatabase)
       const { error2 } = await supabase.from('ingredients').insert(
         ingredientsToDatabase
       )
@@ -60,7 +70,36 @@ export default function AddRecipe() {
    navigation.navigate('Recipes');
     }
     setLoading(false)
-  }
+  }}
+
+  async function addProduct() {
+    if(!productName | !productCategory | !productKcal| !productCarbo| !productFats| !productProtein)
+    Alert.alert("Niewypełnione pola","Aby zapisać produkt, obowiązkowe jest wypełnienie wszystkich pól.")
+    else{
+    setOpenProduct(!openProduct)
+    setLoading(true)
+    const { error } = await supabase.from('products').insert({ 
+        name: productName,
+        category_id: productCategory,
+        calories: productKcal,
+        carbohydrates: productCarbo,
+        fats: productFats,
+        proteins: productProtein
+    })
+    if (error) Alert.alert(error.message)
+    else{
+      setOpenProduct(!openProduct)
+      setProductName('')
+      setProductCategory(7)
+      setProductKcal('')
+      setProductCarbo('')
+      setProductFats('')
+      setProductProtein('')
+      getProducts()
+    }
+    setLoading(false)
+  }}
+
   async function getProducts() {
     try {
       let query = supabase.from('products').select(`id, name`)          
@@ -72,6 +111,23 @@ export default function AddRecipe() {
       if (data) {
         setProducts(data)
         setProductsList(data)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } 
+  }
+  async function getCategories() {
+    try {
+      let query = supabase.from('foodCategories').select(`id, name`)          
+      const { data, error, status } = await query
+
+      if (error && status !== 406) {
+        throw error
+      }
+      if (data) {
+        setCategories(Object.values(data))
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -178,7 +234,7 @@ export default function AddRecipe() {
                 onChangeText={(text) => {
                   let tempArray = [...ingredients]
                   tempArray=tempArray.filter(t => t.id !== item.id)
-                  tempArray.push({id: item.id, name: item.name, weight: text, amount: item.amount, measure:item.measure})
+                  tempArray.push({id: item.id, name: item.name, weight: text.replace(/[^0-9]/g, ''), amount: item.amount, measure:item.measure})
                   setIngredients(tempArray)
               }}
               /></View>
@@ -192,7 +248,7 @@ export default function AddRecipe() {
                 onChangeText={(text) => {
                   let tempArray = [...ingredients]
                   tempArray=tempArray.filter(t => t.id !== item.id)
-                  tempArray.push({id: item.id, name: item.name, weight: item.weight, amount: text, measure:item.measure})
+                  tempArray.push({id: item.id, name: item.name, weight: item.weight, amount: text.replace(/[^0-9]/g, ''), measure:item.measure})
                   setIngredients(tempArray)
               }}
               /></View>
@@ -200,6 +256,7 @@ export default function AddRecipe() {
                 <Text style={{marginRight:wp(3)}}>Miara: </Text>
               <TextInput 
                 maxLength={25}
+                autoCapitalize='none'
                 value={item.measure}
                 style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
                 onChangeText={(text) => {
@@ -215,11 +272,11 @@ export default function AddRecipe() {
               </View>}
   />
                 <View className="flex-row justify-end items-center" style={{paddingTop:wp(3), paddingBottom:wp(3)}}>
-              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj składnik" onPress={() => setOpen(!open)}/>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj składnik" onPress={() => setOpen(!openM)}/>
               </View>
       </View>
       </ScrollView>
-      <Modal visible={open}>
+      <Modal visible={openM}>
           <>
           <View className="flex-1 bg-[#FFF6DC]">
           <View className="items-center">
@@ -237,16 +294,101 @@ export default function AddRecipe() {
             <View style={{backgroundColor:'white', marginTop:hp(1), width: wp(90), alignSelf:'center'}}>
               <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} 
               onPress={()=> {
-                setOpen(!open)
+                setOpen(!openM)
                 var ingredient = {id: item.id, name: item.name, weight: '0', amount: '0', measure:'g'}
                 setIngredients(ingredients => [...ingredients, ingredient])
+                setProductsList(productsList.filter(i => i.id !== item.id))
                 }}>
                 {item.name}
                 </Text>
               </View>}
   />
+          <View className="flex items-center" style={{paddingTop:wp(3), paddingBottom:wp(3)}}>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj produkt" onPress={() => setOpenProduct(!openProduct)}/>
+              </View>
           </View>
-          <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} onPress={()=> setOpen(!open)} title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+          <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} onPress={()=> setOpen(!openM)} title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+          </>
+      </Modal>
+      <Modal visible={openProduct}>
+          <>
+          <View className="flex-1 bg-[#FFF6DC]">
+          <View className="flex-column">
+                <View className="flex items-center p-1">
+              <Input 
+              label='Nazwa produktu'
+                maxLength={50}
+                value={productName}
+                style={{width:wp(70), fontSize:hp(2)}}
+                onChangeText={(text) => { setProductName(text)
+              }}
+              />
+              <View>
+              <Dropdown
+      label="Kategoria"
+      placeholder="Wybierz kategorię"
+       options={categories.map(({ id, name }) => {
+        return { label: name, value: id }
+      })}
+      selectedValue={productCategory}
+      onValueChange={(value) =>  {setProductCategory(value)}}
+      dropdownStyle={{
+        borderWidth: 0, 
+        width:wp(50),
+        backgroundColor:'white',
+      }}
+    />
+              </View>
+              </View>
+                              <View className="flex-row justify-end right-1/4 items-center p-1">
+                <Text style={{marginRight:wp(3)}}>Kalorie </Text>
+              <TextInput 
+                maxLength={6}
+                value={productKcal}
+                keyboardType='numeric'
+                style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
+                onChangeText={(text) => { setProductKcal(text.replace(/[^0-9]/g, ''))
+              }}
+              /></View>
+              <View className="flex-row justify-end right-1/4 items-center p-1">
+                <Text style={{marginRight:wp(3)}}>Węglowodany </Text>
+              <TextInput 
+                maxLength={6}
+                value={productCarbo}
+                keyboardType='numeric'
+                style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
+                onChangeText={(text) => { setProductCarbo(text.replace(/[^0-9]/g, ''))
+              }}
+              /></View>
+              <View className="flex-row justify-end right-1/4 items-center p-1">
+                <Text style={{marginRight:wp(3)}}>Tłuszcze </Text>
+              <TextInput 
+                maxLength={6}
+                value={productFats}
+                keyboardType='numeric'
+                style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
+                onChangeText={(text) => { setProductFats(text.replace(/[^0-9]/g, ''))
+              }}
+              /></View>
+              <View className="flex-row justify-end right-1/4 items-center p-1">
+                <Text style={{marginRight:wp(3)}}>Białka </Text>
+              <TextInput 
+                maxLength={6}
+                value={productProtein}
+                keyboardType='numeric'
+                style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
+                onChangeText={(text) => { setProductProtein(text.replace(/[^0-9]/g, ''))
+              }}
+              /></View>
+              </View>
+          <View className="flex-row justify-center items-center" style={{paddingTop:wp(3), paddingBottom:wp(3)}}>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80), margin:wp(10)}} title="Dodaj produkt" 
+              onPress={() => {
+                addProduct()
+                }}/>
+              </View>
+          </View>
+          <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} onPress={()=> setOpenProduct(!openProduct)} title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
           </>
       </Modal>
       <View className="flex-row items-center">
