@@ -33,7 +33,10 @@ export default function RecipesScreen(){
 
     async function getRecipes() {
         try {
-          let query = supabase.from('recipes').select(`id, name, preparationTime, waitingTime, durability, directions, account_id`).order('id')        
+          let query = supabase.from('recipes')
+          .select(`id, name, preparationTime, waitingTime, durability, directions, account_id`)
+          .or('account_id.eq.'+userId+',account_id.is.null')
+          .order('id')        
           const { data, error, status } = await query
 
           if (error && status !== 406) {

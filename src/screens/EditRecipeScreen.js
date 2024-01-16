@@ -14,17 +14,17 @@ import { SearchBar } from '@rneui/themed';
 import Dropdown from 'react-native-input-select'
 import { Feather } from '@expo/vector-icons';
 
-export default function AddRecipe() {
-  
+export default function EditRecipeScreen({route}) {
+  const { recipe, ingredientsList} = route.params;
   const navigation = useNavigation();
   const [userId] = useContext(PageContext);
   const [products, setProducts] = useState('')
   const [productsList, setProductsList] = useState('')
-  const [recipeName, setRecipeName] = useState('')
-  const [recipePrepTime, setRecipePrepTime] = useState('0')
-  const [recipeWaitTime, setRecipeWaitTime] = useState('0')
-  const [recipeDurability, setRecipeDurability] = useState('1')
-  const [recipeDirections, setRecipeDirections] = useState('')
+  const [recipeName, setRecipeName] = useState(recipe.name)
+  const [recipePrepTime, setRecipePrepTime] = useState(recipe.preparationTime.toString())
+  const [recipeWaitTime, setRecipeWaitTime] = useState(recipe.waitingTime.toString())
+  const [recipeDurability, setRecipeDurability] = useState(recipe.durability.toString())
+  const [recipeDirections, setRecipeDirections] = useState(recipe.directions)
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [ingredients, setIngredients] = useState([])
@@ -37,11 +37,15 @@ export default function AddRecipe() {
   const [productFats, setProductFats] = useState('')
   const [openM, setOpen] = useState(false)
   const [openProduct, setOpenProduct] = useState(false)
-
+  let ingredientsToIngredients = [];
   let ingredientsToDatabase = [];
   useEffect(() => {
     getProducts()
     getCategories()
+    ingredientsList.forEach((val) => {
+        ingredientsToIngredients.push({name: val.products.name,  id:val.product_id, weight: val.weight.toString(), amount:val.amount.toString(), measure:val.measure});
+          });
+          setIngredients(ingredientsToIngredients)
   }, []);
   
   async function addRecipe() {
@@ -49,24 +53,24 @@ export default function AddRecipe() {
     Alert.alert("Niewypełnione pola","Aby zapisać przepis, obowiązkowe jest podanie jego nazwy.")
     else{
     setLoading(true)
-    const { data, error } = await supabase.from('recipes').insert({ 
+    const { data, error } = await supabase.from('recipes').update({ 
         name: recipeName,
         preparationTime: recipePrepTime,
         waitingTime: recipeWaitTime,
         durability: recipeDurability,
         directions: recipeDirections,
-        account_id: userId,
-    }).select().single()
+    }).eq('id',recipe.id)
     if (error) Alert.alert(error.message)
     else{
       ingredients.forEach((val) => {
-        ingredientsToDatabase.push({recipe_id: data.id,  product_id:val.id, weight: parseFloat(val.weight), amount:parseFloat(val.amount), measure:val.measure});
+        ingredientsToDatabase.push({recipe_id: recipe.id,  product_id:val.id, weight: parseFloat(val.weight), amount:parseFloat(val.amount), measure:val.measure});
           });
       }
-      const { error2 } = await supabase.from('ingredients').insert(
+      const { error2 } = await supabase.from('ingredients').delete().eq('recipe_id',recipe.id)
+      const { error3 } = await supabase.from('ingredients').insert(
         ingredientsToDatabase
       )
-    if (error2) Alert.alert(error.message)
+    if (error2 || error3) Alert.alert(error.message)
     else{
    navigation.navigate('Recipes');
     }
@@ -292,6 +296,7 @@ export default function AddRecipe() {
               <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} 
               onPress={()=> {
                 setOpen(!openM)
+                setSearch('')
                 var ingredient = {id: item.id, name: item.name, weight: '0', amount: '0', measure:'g'}
                 setIngredients(ingredients => [...ingredients, ingredient])
                 setProductsList(productsList.filter(i => i.id !== item.id))
@@ -304,7 +309,11 @@ export default function AddRecipe() {
               <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj produkt" onPress={() => setOpenProduct(!openProduct)}/>
               </View>
           </View>
-          <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} onPress={()=> setOpen(!openM)} title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+          <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} 
+          onPress={()=> {
+            setOpen(!openM) 
+            setSearch('')}} 
+            title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
           </>
       </Modal>
       <Modal visible={openProduct}>
@@ -389,7 +398,7 @@ export default function AddRecipe() {
           </>
       </Modal>
       <View className="flex-row items-center">
-        <Button buttonStyle={styles.button} onPress={()=> navigation.navigate('Recipes')} title='Wróć' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+        <Button buttonStyle={styles.button} onPress={()=> navigation.navigate('RecipeDetail', {...recipe})} title='Wróć' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
         <View className="bg-black" style={{width:0.2}}></View>
         <Button title="Zapisz" buttonStyle={styles.button} disabled={loading} onPress={() => addRecipe()} />
 </View>
