@@ -42,7 +42,16 @@ export default function CalendarScreen(){
             Alert.alert(error.message)
           }
         } 
-  }
+  }  
+  const getCurrentDateDatabase=()=>{
+ 
+    var day = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    month = month>9 ? month : '0' + month;
+    day = day>9 ? day : '0' + day;
+    return( year+'-'+month+'-'+day);
+}
 
 
     LocaleConfig.locales.en = LocaleConfig.locales[''];
@@ -91,7 +100,7 @@ export default function CalendarScreen(){
                     todayTextColor:primary,
                     todayBackgroundColor:"transparent"
                 }}
-        selected="2024-01-13"
+        selected={getCurrentDateDatabase()}
         //items={{'2024-01-13': [{name: 'Cycling'}, {name: 'Walking'}, {name: 'Running'}],'2024-01-14': [{name: 'Writing'}],}}
         items={days}
         renderItem={(item, isFirst) => (

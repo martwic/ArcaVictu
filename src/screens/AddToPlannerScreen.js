@@ -36,7 +36,15 @@ export default function AddToPlannerScreen({route}){
           dayNamesShort: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'],
         };
         LocaleConfig.defaultLocale = 'pl';
-
+        const getCurrentDate=()=>{
+ 
+            var day = new Date().getDate();
+            var month = new Date().getMonth() + 1;
+            var year = new Date().getFullYear();
+            month = month>9 ? month : '0' + month;
+            day = day>9 ? day : '0' + day;
+            return( year+'-'+month+'-'+day);
+        }
 
         async function addDishAndMeals() {
             const { data, error } = await supabase.from('dishes').insert({ 
@@ -71,7 +79,7 @@ navigation.navigate('Recipes');
                     <View className="flex-1 bg-[#FFF6DC]">
                     <Text className="font-['Gothic'] font-bold p-5" style={{fontSize:hp(4)}}>Wybierz datę gotowania</Text>
                     <Calendar
-                    minDate={new Date().getDate()}
+                    minDate={getCurrentDate()}
                     theme={{calendarBackground: 'transparent', todayTextColor:'#b1ae95', arrowColor:'#b1ae95'}}
                     onDayPress={day => {
                         setDishDate(day.dateString);

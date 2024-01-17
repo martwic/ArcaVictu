@@ -13,7 +13,6 @@ import * as Linking from "expo-linking";
 
 export default function Login() {
   const [userId, setUserId] = useContext(PageContext);
-  
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)

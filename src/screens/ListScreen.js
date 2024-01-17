@@ -1,13 +1,15 @@
 import React, {useState, useContext, useEffect} from 'react';
-import { View, Text, ScrollView, Modal, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import { View, Text, ScrollView, Modal, TouchableOpacity, TextInput, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button, Input} from 'react-native-elements'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { PageContext } from '../constants/pageContext';
 import { supabase } from '../constants';
+import Checkbox from 'expo-checkbox';
+import { AntDesign } from '@expo/vector-icons';
 
-export default function RecipesScreen(){
+export default function ListScreen(){
     const getCurrentDate=()=>{
  
         var day = new Date().getDate();
@@ -24,11 +26,15 @@ export default function RecipesScreen(){
     const [dateTo, setDateTo] = useState(getCurrentDate())
     const [minDate, setMinDate] = useState(getCurrentDate())
     const [maxDate, setMaxDate] = useState()
+    //const [categorizedList, setCategorizedList] = useContext(PageContext);
+    const [categorizedList, setCategorizedList] = useState([]);
     const [list, setList] = useState()
     useEffect(() => {
-          getList()
+      //if(categorizedList)    
+        //getList()
       }, []);
-    
+      var groupList=[];
+
     LocaleConfig.locales.en = LocaleConfig.locales[''];
         LocaleConfig.locales.pl = {
           monthNames: [
@@ -44,7 +50,7 @@ export default function RecipesScreen(){
         const getList = async ()=>{
             try {
                 const { data, error, status } = await supabase.from('list')
-                .select(`id, name, preparation_date, weight, account_id`)
+                .select(`id, name, preparation_date, weight, account_id, category, category_id`)
                 .eq('account_id',userId)
                 .lte('preparation_date', dateTo)
                 .gte('preparation_date', dateFrom)
@@ -52,7 +58,26 @@ export default function RecipesScreen(){
                   throw error
                 }
                 if (data) {
-                  setList(data)
+                  setList(Object.values(data))
+                  var temp=[]
+                  temp=Object.values(data)
+                  temp.reduce(function(res, value) {
+                    if (!res[value.id]) {
+                      res[value.id] = { id: value.id, name: value.name, weight: 0, category: value.category, category_id:value.category_id };
+                      groupList.push(res[value.id])
+                    }
+                    res[value.id].weight += parseFloat(value.weight);
+                    return res;
+                  }, {});
+                  var i=0
+                  var tempS=[]
+                  groupList.sort((a, b) =>a.category_id-b.category_id).map((item, index) => {
+                    var temp = {id:i, isActive:false, val: `${item.name} - ${item.weight} g `}
+                    tempS.push(temp)
+                    i++
+                    return temp;
+                  })
+                  setCategorizedList(tempS)
                 }
               } catch (error) {
                 if (error instanceof Error) {
@@ -107,22 +132,68 @@ export default function RecipesScreen(){
                     }}
                     /></View>
                  </Modal>
-
-                 <FlatList className=""
+                 <View className="flex-auto" >
+                 <FlatList className="flex-1"
+                 removeClippedSubviews={false}
                     ListEmptyComponent={null}
-                    data={list}
+                    data={categorizedList.sort((a, b) =>a.id-b.id)}
                     keyExtractor={(item) => {
                     return item.id;
                     }}
                     renderItem={({item}) => 
-                        <View className="p-3">
-                            <Text 
-                            style={{fontSize:hp(2.5)}}>{item.name} - {item.weight} g</Text>
+                        <View className="px-3 flex-1 flex-row items-center">
+                            <Checkbox
+                              disabled={false}
+                              color={item.isActive ? '#b1ae95' : undefined}
+                              value={item.isActive}
+                              onValueChange={(newValue) => {
+                                let tempArray = [...categorizedList]
+                                tempArray=tempArray.filter(t => t.id !== item.id)
+                                tempArray.push({id: item.id, isActive:newValue, val: item.val})
+                                setCategorizedList(tempArray)
+                              }}
+                            />
+                            <TextInput 
+                              value={item.val}
+                              editable={!item.isActive}
+                              style={[styles.textInput,  item.isActive ? styles.isActive : styles.isNotActive]}
+                              onChangeText={(text) => {  
+                              let tempArray = [...categorizedList]
+                              tempArray=tempArray.filter(t => t.id !== item.id)
+                              tempArray.push({id: item.id, isActive: item.isActive, val: text})
+                              setCategorizedList(tempArray)
+                            }}
+                          />
+                          <TouchableOpacity onPress={()=>{
+                            let tempArray = [...categorizedList]
+                            tempArray=tempArray.filter(t => t.id !== item.id)
+                            setCategorizedList(tempArray)
+                          }}>
+                            <AntDesign name="delete" size={24} color="black" />
+                          </TouchableOpacity>
                         </View>
                     }
-                    />
-
+                    /></View>
         </View>
     </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+  textInput: {
+    backgroundColor:'white',
+    width:wp(70),
+    fontSize:hp(2.3),
+    padding:wp(1),
+    paddingLeft:hp(3),
+    margin:wp(1),
+    borderRadius:5
+  },
+  isActive:{
+    textDecorationLine:'line-through'
+  },
+  isNotActive:{
+    textDecorationLine:'none'
+  },
+})                            
+                            
