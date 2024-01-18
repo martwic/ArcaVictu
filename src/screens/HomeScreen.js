@@ -161,7 +161,7 @@ export default function HomeScreen(){
                         ListEmptyComponent={null}
                         scrollEnabled
                         data={dishesList}
-                        keyExtractor={item => item.id} 
+                        keyExtractor={item => item.name} 
                         renderItem={({item}) => 
                         <>
                         <View className="p-2 m-1 bg-white" style={{borderRadius:10}}>

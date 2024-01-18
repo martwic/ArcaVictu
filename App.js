@@ -7,14 +7,13 @@ import { supabase } from './src/constants';
 import 'react-native-url-polyfill/auto'
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback} from 'react';
-import { PageContext } from './src/constants/pageContext';
+import { PageContext} from './src/constants/pageContext';
 import { useState } from 'react';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [userId, setUserId] = useState(undefined);
-  const [categorizedList, setCategorizedList] = useState([]);
   const [fontsLoaded, fontError] = useFonts({
     'Gothic': require('./assets/fonts/CenturyGothic.otf'),
     'GothicBold': require('./assets/fonts/CenturyGothicBold.otf'),
@@ -33,7 +32,7 @@ export default function App() {
   
   return (
     <>  
-    <PageContext.Provider value={[userId, setUserId, categorizedList, setCategorizedList]}>  
+    <PageContext.Provider value={[userId, setUserId]}>  
       <Navigation/>
       </PageContext.Provider>
     </>

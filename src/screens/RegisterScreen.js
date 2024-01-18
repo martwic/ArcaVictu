@@ -36,8 +36,9 @@ export default function Register() {
     })
 
     if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
+    if (!session) Alert.alert('Aktywuj konto','Na podany adres mailowy została wysłana wiadomość z linkiem weryfikacyjnym.')
     setLoading(false)
+    navigation.navigate('Login')
   }
   return (
     <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
@@ -49,7 +50,7 @@ export default function Register() {
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
-          autoCapitalize={'none'}
+          autoCapitalize='none'
         />
       </View>
       <View style={styles.verticallySpaced}>

@@ -8,6 +8,7 @@ import { StyleSheet, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { PageContext } from '../constants/pageContext';
 import { ButtonGroup} from '@rneui/themed';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function SettingsScreen(){
   const [session, setSession] = useState(null)
@@ -37,6 +38,11 @@ export default function SettingsScreen(){
   async function signOut(){
     await supabase.auth.signOut()
     NativeModules.DevSettings.reload();
+    try {
+      await AsyncStorage.clear();
+  } catch(e) {
+      console.log(err);
+  }
 
   }
     

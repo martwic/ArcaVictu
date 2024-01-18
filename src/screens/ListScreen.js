@@ -4,14 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button, Input} from 'react-native-elements'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { PageContext } from '../constants/pageContext';
+import { PageContext, ListContext } from '../constants/pageContext';
 import { supabase } from '../constants';
 import Checkbox from 'expo-checkbox';
 import { AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function ListScreen(){
     const getCurrentDate=()=>{
- 
+
         var day = new Date().getDate();
         var month = new Date().getMonth() + 1;
         var year = new Date().getFullYear();
@@ -26,11 +27,13 @@ export default function ListScreen(){
     const [dateTo, setDateTo] = useState(getCurrentDate())
     const [minDate, setMinDate] = useState(getCurrentDate())
     const [maxDate, setMaxDate] = useState()
-    //const [categorizedList, setCategorizedList] = useContext(PageContext);
     const [categorizedList, setCategorizedList] = useState([]);
+    //const [categorizedList, setCategorizedList] = useState([]);
     const [list, setList] = useState()
     useEffect(() => {
-      //if(categorizedList)    
+      getCategorizedList()  
+      getDateFrom()
+      getDateTo() 
         //getList()
       }, []);
       var groupList=[];
@@ -46,6 +49,71 @@ export default function ListScreen(){
           dayNamesShort: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'],
         };
         LocaleConfig.defaultLocale = 'pl';
+
+        const now=()=>{
+ 
+          var day = new Date().getDate();
+          var month = new Date().getMonth() + 1;
+          var year = new Date().getFullYear();
+          var hours = new Date().getHours();
+          var minutes = new Date().getMinutes();
+          var seconds = new Date().getSeconds();
+          var miliseconds = new Date().getMilliseconds();
+          return( year+month+day+hours+minutes+seconds+miliseconds);
+      }
+
+        const storeCategorizedList  = async (value) => {
+          try {
+            await AsyncStorage.setItem('list', JSON.stringify(value));
+          } catch (e) {
+            // saving error
+          }
+        };
+
+        const getCategorizedList = async () => {
+          try {
+            const value = await AsyncStorage.getItem('list');
+            if (value !== null) {
+              setCategorizedList(JSON.parse(value))
+            }
+          } catch (e) {
+            // error reading value
+          }
+        };
+
+        const storeDateFrom  = async (value) => {
+          try {
+            await AsyncStorage.setItem('datefrom', value);
+          } catch (e) {
+          }
+        };
+
+        const getDateFrom = async () => {
+          try {
+            const value = await AsyncStorage.getItem('datefrom');
+            if (value !== null) {
+              setDateFrom(value)
+            }
+          } catch (e) {
+          }
+        };
+
+        const storeDateTo  = async (value) => {
+          try {
+            await AsyncStorage.setItem('dateto', value);
+          } catch (e) {
+          }
+        };
+
+        const getDateTo = async () => {
+          try {
+            const value = await AsyncStorage.getItem('dateto');
+            if (value !== null) {
+              setDateTo(value)
+            }
+          } catch (e) {
+          }
+        };
 
         const getList = async ()=>{
             try {
@@ -78,6 +146,7 @@ export default function ListScreen(){
                     return temp;
                   })
                   setCategorizedList(tempS)
+                  storeCategorizedList(tempS)
                 }
               } catch (error) {
                 if (error instanceof Error) {
@@ -110,6 +179,7 @@ export default function ListScreen(){
                     theme={{calendarBackground: 'transparent', todayTextColor:'#b1ae95', arrowColor:'#b1ae95'}}
                     onDayPress={day => {
                         setDateFrom(day.dateString);
+                        storeDateFrom(day.dateString);
                         setMinDate(day.dateString);
                         setOpenFrom(!openFrom);
                         getList()
@@ -126,6 +196,7 @@ export default function ListScreen(){
                     theme={{calendarBackground: 'transparent', todayTextColor:'#b1ae95', arrowColor:'#b1ae95'}}
                     onDayPress={day => {
                         setDateTo(day.dateString);
+                        storeDateTo(day.dateString);
                         setMaxDate(day.dateString);
                         setOpenTo(!openTo);
                         getList()
@@ -151,6 +222,7 @@ export default function ListScreen(){
                                 tempArray=tempArray.filter(t => t.id !== item.id)
                                 tempArray.push({id: item.id, isActive:newValue, val: item.val})
                                 setCategorizedList(tempArray)
+                                storeCategorizedList(tempArray)
                               }}
                             />
                             <TextInput 
@@ -162,18 +234,27 @@ export default function ListScreen(){
                               tempArray=tempArray.filter(t => t.id !== item.id)
                               tempArray.push({id: item.id, isActive: item.isActive, val: text})
                               setCategorizedList(tempArray)
+                              storeCategorizedList(tempArray)
                             }}
                           />
                           <TouchableOpacity onPress={()=>{
                             let tempArray = [...categorizedList]
                             tempArray=tempArray.filter(t => t.id !== item.id)
                             setCategorizedList(tempArray)
+                            storeCategorizedList(tempArray)
                           }}>
                             <AntDesign name="delete" size={24} color="black" />
                           </TouchableOpacity>
                         </View>
                     }
                     /></View>
+                    <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80), marginTop:hp(1)}} title="Dodaj kolejny punkt" 
+                    onPress={() => {
+                      let tempArray = [...categorizedList]
+                      tempArray.push({id: now(), isActive: false, val: ''})
+                      setCategorizedList(tempArray)
+                      storeCategorizedList(tempArray)
+                    }}/>
         </View>
     </SafeAreaView>
     )

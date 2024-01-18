@@ -31,11 +31,17 @@
       [
         "expo-build-properties",
         {
-            "android": {
-                "kotlinVersion": "1.8.10"
-            }
+          "android": {
+            "kotlinVersion": "1.8.10"
+          }
         }
-    ]
-    ]
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0351b9ba-c8cd-4543-b835-5e6bfc0516a6"
+      }
+    },
+    "owner": "martwica"
   }
 }
