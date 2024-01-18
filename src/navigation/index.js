@@ -12,7 +12,6 @@ import SettingsScreen from '../screens/SettingsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AddRecipeScreen from '../screens/AddRecipeScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
-import AddToPlannerScreen from '../screens/AddToPlannerScreen';
 import EditRecipeScreen from '../screens/EditRecipeScreen';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 
@@ -27,7 +26,6 @@ return(
     <Stack.Screen name="AddRecipe" component={AddRecipeScreen} />
     <Stack.Screen name="EditRecipe" component={EditRecipeScreen} />
     <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
-    <Stack.Screen name="AddToPlanner" component={AddToPlannerScreen} />
   </Stack.Navigator>
 )
 }

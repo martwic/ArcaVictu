@@ -75,7 +75,7 @@ export default function HomeScreen(){
     const getMeals = async ()=>{
         try {
             const { data, error, status } = await supabase.from('meals')
-            .select(`id, dishes(account_id, recipe_id, recipes(name)), consumption_date, servings`)
+            .select(`id, dishes!inner(account_id, recipe_id, recipes(name)), consumption_date, servings`)
             .eq('consumption_date',getCurrentDateDatabase())
             .eq('dishes.account_id',userId)
             if (error && status !== 406) {
