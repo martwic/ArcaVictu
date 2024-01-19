@@ -133,6 +133,7 @@ export default function RecipeDetailScreen(props) {
             }
           } 
     }
+    
     const deleteRecipe = async ()=>{
       try {
           const { error} = await supabase.from('recipes')

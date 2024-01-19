@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, Text, ScrollView, BackHandler, FlatList, StyleSheet, Modal } from 'react-native';
+import { View, Text, ScrollView, BackHandler, FlatList, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext';
@@ -163,7 +163,7 @@ export default function HomeScreen(){
                         keyExtractor={item => item.name} 
                         renderItem={({item}) => 
                         <>
-                        <View className="p-2 m-1 bg-white" style={{borderRadius:10}}>
+                        <TouchableOpacity className="p-2 m-1 bg-white" style={{borderRadius:10}}>
                             <Text style={{fontSize:hp(2.7),padding:hp(0.5)}}>
                             {item.name}
                             </Text>
@@ -175,13 +175,13 @@ export default function HomeScreen(){
                             <>+ {item.waitingTime}'</>}
                             </Text>
                             </View>
-                            </View>
+                            </TouchableOpacity>
                         </>
                         }
                     />          
                                 </View>
                 </View>
-                {!dishesList &&
+                {dishesList!=null &&
                 <View className="flex-row items-center">
                 <Button buttonStyle={styles.button} 
                 onPress={()=>{
