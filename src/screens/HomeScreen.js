@@ -18,10 +18,9 @@ export default function HomeScreen(){
     const[time, setTime]=useState('0');
     const[maxTime, setMaxTime]=useState('0');
     const[ingredientsList, setIngredientsList]=useState([]);
-    //const[openIngredients, setOpenIngredients]=useState(false);
     const[openCook, setOpenCook]=useState(false);
     const [userId] = useContext(PageContext);
-    //const[todaysProducts, setTodaysProducts]  = useState([]);
+    const [todaysRecipes, setTodaysRecipes] = useState([])
     var todaysProducts=[];
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -182,6 +181,7 @@ export default function HomeScreen(){
                     />          
                                 </View>
                 </View>
+                {!dishesList &&
                 <View className="flex-row items-center">
                 <Button buttonStyle={styles.button} 
                 onPress={()=>{
@@ -189,7 +189,7 @@ export default function HomeScreen(){
                   setOpenCook(!openCook)
                 }} 
                 title='Gotuj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
-            </View>
+            </View>}
             <Modal visible={openCook}>
           <>
           <View className="flex-1 bg-[#FFF6DC]">
@@ -218,6 +218,15 @@ export default function HomeScreen(){
                         </>
                         }
                     /></View>  
+            <View>
+              <FlatList
+                ListEmptyComponent={null}
+                scrollEnabled
+                data={ingredientsList.sort((a, b) =>a.weight>b.weight ? -1 : 1)}
+                                      keyExtractor={item => item.productid} 
+              
+              />
+            </View>
             </View>
           <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} onPress={()=> setOpenCook(!openCook)} title='Zamknij' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
           </>

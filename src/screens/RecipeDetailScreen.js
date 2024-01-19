@@ -19,7 +19,7 @@ export default function RecipeDetailScreen(props) {
     const recipeId = item.id;
     const [userId] = useContext(PageContext);
     const navigation = useNavigation();
-    const [ingredients, setIngredients] = useState(null);
+    const [ingredients, setIngredients] = useState('');
     const [openDrop, setOpenDrop] = useState(false);
     const [portions, setPortions] = useState(4)
     const[openMultiple, setOpenMultiple] = useState(false)
@@ -31,19 +31,22 @@ export default function RecipeDetailScreen(props) {
     const [meals, setMeals] = useState([])
     const [dishesList, setDishesList] = useState()
     const [mealsList, setMealsList] = useState()
+    const [kcal, setKcal] = useState(0)
+    const [proteins, setProteins] = useState(0)
+    const [carbs, setCarbs] = useState(0)
+    const [fats, setFats] = useState(0)
     
     let datesDishes = {};
     let datesMeals = {};
+    let dates = {};
     let mealsToDatabase = [];
     useEffect(()=>{
         getRecipeData(recipeId);
         getDisabledDishes();
         getDisabledMeals();
+        //setValues();
     },[])
-    selected.forEach((val) => {
-      datesMeals[val] = {selected: true,  selectedColor:'#FFC6AC'};
-      setMealsList(datesMeals)
-      });
+
       
 //disableTouchEvent: true,
       LocaleConfig.locales.en = LocaleConfig.locales[''];
@@ -105,13 +108,24 @@ export default function RecipeDetailScreen(props) {
     const getRecipeData = async ()=>{
         try {
             const { data, error, status } = await supabase.from('ingredients')
-            .select(`id, recipes(name, preparationTime, directions, account_id), product_id, products(name),weight, amount, measure`)
+            .select(`id, recipes!inner(name, preparationTime, directions, account_id), product_id, products!inner(name, calories, carbohydrates, fats, proteins),weight, amount, measure`)
             .eq('recipe_id',recipeId)
             if (error && status !== 406) {
               throw error
             }
             if (data) {
               setIngredients(data)
+              var k=0, p=0, c=0, f=0
+              Object.values(data).forEach((val) => {
+                k+=parseFloat(val.weight)*parseFloat(val.products.calories)/100
+                p+=parseFloat(val.weight)*parseFloat(val.products.proteins)/100
+                c+=parseFloat(val.weight)*parseFloat(val.products.carbohydrates)/100
+                f+=parseFloat(val.weight)*parseFloat(val.products.fats)/100
+                })
+                setKcal(k)
+                setProteins(p)
+                setCarbs(c)
+                setFats(f)
             }
           } catch (error) {
             if (error instanceof Error) {
@@ -173,7 +187,13 @@ else{
 navigation.navigate('Recipes');
 }
   }
+//const setSelectedMeals = ()=>{
+  selected.forEach((val) => {
+    dates[val] = {selected: true,  selectedColor:'#FFC6AC'};
+    });
 
+    //setMealsList(datesMeals)
+//}
 
   const setDisabled = ()=>{
     disabledDishes.forEach((val) => {
@@ -211,6 +231,9 @@ navigation.navigate('Recipes');
             <TouchableOpacity onPress={()=> setOpenDrop(!openDrop)}><Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><AntDesign name="delete" size={24} color="black" /></Text></TouchableOpacity>
             </>}
             </View>
+            <View className="items-center justify-center flex-row">
+              <Text>kcal: {kcal.toFixed(1)} | B: {proteins.toFixed(1)} | T: {fats.toFixed(1)} | W: {carbs.toFixed(1)}</Text>
+            </View>
             <View>
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3), padding:hp(1)}}>Składniki:</Text>
             <FlatList
@@ -231,8 +254,6 @@ navigation.navigate('Recipes');
                 <Button buttonStyle={styles.button} onPress={()=> {
                   setOpen(!open)
                   setDisabled()
-                  console.log(datesMeals)
-                  console.log(datesDishes)
                   }} 
                   title={'Dodaj do planera'} />
             </View>
@@ -272,17 +293,21 @@ navigation.navigate('Recipes');
                     <Calendar
                     theme={{todayTextColor:'#FFC6AC', calendarBackground:'#FFF6DC',arrowColor:'#b1ae95'}}
                     minDate={dishDate}
-                    markedDates={mealsList}
+                    markedDates={Object.assign(dates , mealsList)}
                     onDayPress={day => {
                         if(meals.some(item => day.dateString===item.date)){
                             setMeals(meals.filter(item => item.date !== day.dateString))
                             setSelected(selected.filter(item => item !== day.dateString))
+                            //setSelectedMeals()
                         }
                         else{
                         //mealsDates.filter((_, dateString) => dateString !== item.dateString)
                         var meal = {date: day.dateString, portions: 1}
                         setMeals(meals => [...meals, meal])
-                        setSelected(selected => [...selected, day.dateString])}
+                        setSelected(selected => [...selected, day.dateString])
+                        //setSelectedMeals()
+                        
+                      }
                     }}
                     />
                     <FlatList className=""
@@ -313,10 +338,11 @@ navigation.navigate('Recipes');
                     }
                     />
                           <View className="items-center p-5">
-                    <Button  buttonStyle={{backgroundColor: '#b1ae95', width:wp(80)}} onPress={addDishAndMeals} title='Dodaj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
                     </View>
-                    <Button  buttonStyle={styles.buttonfull} onPress={()=> setOpenMultiple(!openMultiple)} title='Zamknij' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
-                    </View>
+                    <View className="flex-row">
+                    <Button  buttonStyle={styles.button} onPress={()=> setOpenMultiple(!openMultiple)} title='Zamknij' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+                    <Button  buttonStyle={styles.button} onPress={addDishAndMeals} title='Dodaj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+                    </View></View>
                 </Modal>
     </SafeAreaView>
     )
