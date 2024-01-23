@@ -1,10 +1,10 @@
 import React, {useState, useContext, useEffect} from 'react';
-import { View, Text, ScrollView, Modal, TouchableOpacity, TextInput, FlatList, StyleSheet } from 'react-native';
+import { View, Text,  Modal, TouchableOpacity, TextInput, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Button, Input} from 'react-native-elements'
+import { Button} from 'react-native-elements'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { PageContext, ListContext } from '../constants/pageContext';
+import { PageContext } from '../constants/pageContext';
 import { supabase } from '../constants';
 import Checkbox from 'expo-checkbox';
 import { AntDesign } from '@expo/vector-icons';
@@ -65,9 +65,7 @@ export default function ListScreen(){
         const storeCategorizedList  = async (value) => {
           try {
             await AsyncStorage.setItem('list', JSON.stringify(value));
-          } catch (e) {
-            // saving error
-          }
+          } catch (e) {}
         };
 
         const getCategorizedList = async () => {
@@ -223,7 +221,8 @@ export default function ListScreen(){
                                 tempArray.push({id: item.id, isActive:newValue, val: item.val})
                                 setCategorizedList(tempArray)
                                 storeCategorizedList(tempArray)
-                              }}
+                              }
+                            }
                             />
                             <TextInput 
                               value={item.val}

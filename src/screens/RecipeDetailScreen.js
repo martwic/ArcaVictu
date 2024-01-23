@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text,  BackHandler, StyleSheet, Alert, FlatList, TouchableOpacity, Modal} from 'react-native';
+import { View, Text,  StyleSheet, Alert, FlatList, TouchableOpacity, Modal} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ButtonGroup, SearchBar } from '@rneui/themed';
 import { supabase } from '../constants';
 import { Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
@@ -179,15 +178,16 @@ export default function RecipeDetailScreen(props) {
         meals.forEach((val) => {
             mealsToDatabase.push({dish_id:data.id,  consumption_date:val.date, servings:val.portions});
             });
-        }
+    }
         const { error2 } = await supabase.from('meals').insert(
             mealsToDatabase
         )
-if (error2) Alert.alert(error.message)
-else{
-navigation.navigate('Recipes');
-}
+    if (error2) Alert.alert(error.message)
+    else{
+    navigation.navigate('Recipes');
+    }
   }
+  
 //const setSelectedMeals = ()=>{
   selected.forEach((val) => {
     dates[val] = {selected: true,  selectedColor:'#FFC6AC'};

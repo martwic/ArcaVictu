@@ -1,11 +1,9 @@
 import 'react-native-url-polyfill/auto'
 import React, { useState, useEffect, useContext, useRef } from 'react'
-import { Alert, Pressable, StyleSheet, View,  TextInput, FlatList, Modal, ScrollView, TouchableOpacity} from 'react-native'
+import { Alert,  StyleSheet, View,  TextInput, FlatList, Modal, ScrollView, TouchableOpacity} from 'react-native'
 import { supabase } from '../constants'
 import { Button, Input, Text} from 'react-native-elements'
-import { Session } from '@supabase/supabase-js'
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext'

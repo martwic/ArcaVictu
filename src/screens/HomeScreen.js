@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, Text, ScrollView, BackHandler, FlatList, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, BackHandler, FlatList, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { PageContext } from '../constants/pageContext';
@@ -143,10 +143,10 @@ export default function HomeScreen(){
                         renderItem={({item}) => 
                         <>
                         <View className="p-2 m-1 bg-white flex-row" style={{borderRadius:10, justifyContent:'space-between'}}>
-                            <Text style={{fontSize:hp(2.7), padding:hp(0.5)}}>
+                            <Text style={{fontSize:hp(2.7), padding:hp(0.5), color:"#555"}}>
                             {item.dishes.recipes.name}
                             </Text>
-                            <Text style={{fontSize:hp(2.5),padding:hp(0.5)}}>|  <MaterialCommunityIcons name="bowl-mix-outline" size={20} color="black" />: {item.servings}</Text>
+                            <Text style={{fontSize:hp(2.5),padding:hp(0.5), color:"#555"}}>|  <MaterialCommunityIcons name="bowl-mix-outline" size={20} color="#555" />: {item.servings}</Text>
                         </View></>
                         }
                     />
@@ -164,13 +164,13 @@ export default function HomeScreen(){
                         renderItem={({item}) => 
                         <>
                         <TouchableOpacity className="p-2 m-1 bg-white" style={{borderRadius:10}}>
-                            <Text style={{fontSize:hp(2.7),padding:hp(0.5)}}>
+                            <Text style={{fontSize:hp(2.7),padding:hp(0.5), color:"#555"}}>
                             {item.name}
                             </Text>
                             <View className="flex-row justify-end" style={{}}>
-                            <Text style={{fontSize:hp(2.5),padding:hp(1)}}>|  <MaterialCommunityIcons name="bowl-mix-outline" size={20} color="black" />: {item.sum}</Text>
-                            <Text style={{fontSize:hp(2.5),padding:hp(1)}}>|</Text>
-                            <Text style={{fontSize:hp(2.5), padding:hp(1)}}><Feather name="clock" size={20} color="black" />: {item.preparationTime}' 
+                            <Text style={{fontSize:hp(2.5),padding:hp(1), color:"#555"}}>|  <MaterialCommunityIcons name="bowl-mix-outline" size={20} color="#555" />: {item.sum}</Text>
+                            <Text style={{fontSize:hp(2.5),padding:hp(1), color:"#555"}}>|</Text>
+                            <Text style={{fontSize:hp(2.5), padding:hp(1), color:"#555"}}><Feather name="clock" size={20} color="#555" />: {item.preparationTime}' 
                             {(item.waitingTime>0) &&
                             <>+ {item.waitingTime}'</>}
                             </Text>
@@ -188,7 +188,7 @@ export default function HomeScreen(){
                   mapProducts()
                   setOpenCook(!openCook)
                 }} 
-                title='Gotuj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+                title='Szczegóły gotowania' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
             </View>}
             <Modal visible={openCook}>
           <>

@@ -1,14 +1,13 @@
 import React, {useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Alert, FlatList  } from 'react-native';
-import { Input, Image, Button } from 'react-native-elements';
+import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity  } from 'react-native';
+import { Image, Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ButtonGroup, SearchBar } from '@rneui/themed';
-import { AntDesign } from '@expo/vector-icons';
 import { supabase } from '../constants';
 import { PageContext } from '../constants/pageContext';
-
+import { AntDesign } from '@expo/vector-icons';
 
 export default function RecipesScreen(){
 
@@ -88,6 +87,7 @@ export default function RecipesScreen(){
                   (text) => {setSearch(text)
                     filterData(text)
                     }} value={search} round containerStyle={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+              <TouchableOpacity><AntDesign name="filter" size={24} color={"grey"} /></TouchableOpacity>
             </View>
             <ButtonGroup 
             buttons={['Wszystkie',  'Własne']}

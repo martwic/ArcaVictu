@@ -1,25 +1,28 @@
 import React, {useContext} from 'react';
-import { View, Text, ScrollView, BackHandler, NativeModules } from 'react-native';
+import { View, Text, NativeModules } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useState, useEffect } from 'react'
 import { supabase } from '../constants';
-import { StyleSheet, Alert } from 'react-native'
-import { Button, Input } from 'react-native-elements'
+import { StyleSheet } from 'react-native'
+import { Button} from 'react-native-elements'
 import { PageContext } from '../constants/pageContext';
 import { ButtonGroup} from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Fontisto } from '@expo/vector-icons';
 
 export default function SettingsScreen(){
   const [session, setSession] = useState(null)
-  //const [userId, setUserId] = useState(null)
   const [userId, setUserId] = useContext(PageContext);
-  const [userEmail, setUserEmail] = useState(null)
+  const [userEmail, setUserEmail] = useState('')
+  const [userName, setUserName] = useState('Marta')
+  const [ifMeat, setIfMeat] = useState(0)
+  const [ifDairy, setIfDairy] = useState(0)
+  const [ifGrains, setIfGrains] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      //setSession(session)
       setUserId(session.user.id)
       setUserEmail(session.user.email)
     })
@@ -41,7 +44,7 @@ export default function SettingsScreen(){
     try {
       await AsyncStorage.clear();
   } catch(e) {
-      console.log(err);
+      console.log(e);
   }
 
   }
@@ -51,15 +54,40 @@ export default function SettingsScreen(){
         <View className="bg-[#FFC6AC] w-full p-2 items-center">
             <Text className="font-['Gothic']" style={{fontSize:hp(5)}}>Konto</Text>
         </View>
-        <View className="flex-1 items-center p-2">
+        <View className="flex-1" style={{width:wp(100)}}>
 
-        <Text className="font-['Gothic'] font-bold p-3" style={{fontSize:hp(3), textAlign:'center'}}>Email:</Text>
-        <Text className="font-['Gothic']p-3" style={{fontSize:hp(3), textAlign:'center'}}>{userEmail}</Text>
-        
-
-        
+        <Text className="font-['Gothic'] font-bold pt-3 pl-3" style={{fontSize:hp(4.5)}}>Cześć, {userName}!</Text>
+        <View className="flex-row items-center pl-3">
+        <Text style={{fontSize:hp(2.2)}}><Fontisto name="email" size={20} color="black" /> </Text>
+        <Text style={{fontSize:hp(2.2)}}>{userEmail}</Text>
         </View>
-        <Text className="p-4">{userId}</Text>
+        <Text className="font-['Gothic'] font-bold pt-7 pb-5 pl-3" style={{fontSize:hp(3)}}>Preferencje dotyczące diety:</Text>
+        <ButtonGroup 
+            buttons={['Jem mięso',  'Nie jem mięsa']}
+            selectedIndex={ifMeat}
+            selectedButtonStyle={{backgroundColor:'#b1ae95'}}
+            onPress={(value) => {
+              setIfMeat(value)
+            }}/>                       
+                <ButtonGroup 
+            buttons={['Jem nabiał',  'Nie jem nabiału']}
+            selectedIndex={ifDairy}
+            selectedButtonStyle={{backgroundColor:'#b1ae95'}}
+            onPress={(value) => {
+              setIfDairy(value)
+            }}/>
+                <ButtonGroup 
+            buttons={['Jem produkty zbożowe',  'Nie jem produktów zbożowych']}
+            selectedIndex={ifGrains}
+            selectedButtonStyle={{backgroundColor:'#b1ae95'}}
+            onPress={(value) => {
+              setIfGrains(value)
+            }}/>
+        </View>
+        <Button title="Zmień hasło" buttonStyle={styles.button} onPress={()=>signOut()}/>
+        <View className="border-b-2 border-[#FFF6DC] w-4/5"/>
+        <Button title="Usuń konto" buttonStyle={styles.button} onPress={()=>signOut()}/>
+        <View className="border-b-2 border-[#FFF6DC] w-4/5"/>
         <Button title="Wyloguj" buttonStyle={styles.button} onPress={()=>signOut()}/>
     </SafeAreaView>
     )
