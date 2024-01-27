@@ -20,13 +20,14 @@ export default function HomeScreen(){
     const[ingredientsList, setIngredientsList]=useState([]);
     const[openCook, setOpenCook]=useState(false);
     const [userId] = useContext(PageContext);
-    const [todaysRecipes, setTodaysRecipes] = useState([])
+    const [todaysRecipes, setTodaysRecipes] = useState('')
     var todaysProducts=[];
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           getMeals()
           getDishes()
           getTodaysCooking()
+          getRecipes()
         });
         return unsubscribe;
       }, [navigation]);
@@ -71,6 +72,27 @@ export default function HomeScreen(){
     } 
   }
 
+  async function getRecipes() {
+    try {
+      let query = supabase.from('recipes')
+      .select(`id, name, preparationTime, waitingTime, durability, directions, account_id`)
+      .or('account_id.eq.'+userId+',account_id.is.null')
+      .order('id')        
+      const { data, error, status } = await query
+
+      if (error && status !== 406) {
+        throw error
+      }
+      if (data) {
+        setTodaysRecipes(data)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } 
+  }
+
     const getMeals = async ()=>{
         try {
             const { data, error, status } = await supabase.from('meals')
@@ -92,7 +114,7 @@ export default function HomeScreen(){
     const getDishes = async ()=>{
         try {
             const { data, error, status } = await supabase.from('dishesview')
-            .select('name, preparation_date, sum, account_id, preparationTime, waitingTime')
+            .select('name, preparation_date, sum, account_id, preparationTime, waitingTime, recipe_id')
             .eq('preparation_date',getCurrentDateDatabase())
             .eq('account_id',userId)
             if (error && status !== 406) {
@@ -163,7 +185,14 @@ export default function HomeScreen(){
                         keyExtractor={item => item.name} 
                         renderItem={({item}) => 
                         <>
-                        <TouchableOpacity className="p-2 m-1 bg-white" style={{borderRadius:10}}>
+                        <TouchableOpacity className="p-2 m-1 bg-white" style={{borderRadius:10}} 
+                        onPress={()=>{
+                          var recipes=Object.values(todaysRecipes).filter((val)=>val.id==item.recipe_id)
+                          var recipe=recipes[0]
+                          console.log(recipe)
+                          console.log(item.recipe_id)
+                          navigation.navigate("RecipeDetail",{...recipe})
+                        }}>
                             <Text style={{fontSize:hp(2.7),padding:hp(0.5), color:"#555"}}>
                             {item.name}
                             </Text>

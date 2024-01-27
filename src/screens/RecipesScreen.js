@@ -165,7 +165,11 @@ const filter = (index, search, meat, dairy, grains)=>{
             renderItem={({item}) => 
             <View style={{backgroundColor:'white', margin:hp(1), width: wp(43)}}>
               
-              <Image style={{height:hp(20)}} onPress={()=> navigation.navigate('RecipeDetail', {...item})} source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/object/public/recipes/`+item.id+`.jpg`}}/>
+              <Image style={{height:hp(20)}} onPress={()=> {
+                navigation.navigate('RecipeDetail', {...item})
+                console.log(item)}} 
+                source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/object/public/recipes/`+item.id+`.jpg`}}/>
+              
               <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>
                 {item.name}
                 </Text>
