@@ -9,8 +9,10 @@ import { PageContext } from '../constants/pageContext';
 import { ButtonGroup} from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Fontisto } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function SettingsScreen(){
+  const navigation = useNavigation()
   const [session, setSession] = useState(null)
   const [userId, setUserId] = useContext(PageContext);
   const [userEmail, setUserEmail] = useState('')
@@ -44,12 +46,13 @@ export default function SettingsScreen(){
   }, [])
   async function signOut(){
     await supabase.auth.signOut()
-    NativeModules.DevSettings.reload();
+    setUserId(null)
     try {
       await AsyncStorage.setItem('list', '')
   } catch(e) {
       console.log(e);
   }
+  navigation.navigate('Login');
   }
   async function getPreferences(){
     const { data, error } = await supabase
@@ -101,7 +104,8 @@ export default function SettingsScreen(){
   async function deleteAccount(){
     const { data, error } = await supabase.rpc('check_user_password', {current_plain_password:password})
     if(data){
-      
+      const { error } = await supabase.rpc('drop_user_account')
+      signOut();
     }
     if(error){
       Alert.alert(error.message);
@@ -117,8 +121,7 @@ export default function SettingsScreen(){
       }
       setPassword('')
       setNewPassword('')
-      console.log(JSON.stringify(userId))
-      console.log(JSON.stringify(session))
+      navigation.navigate('Settings')
   }
     
     return (
