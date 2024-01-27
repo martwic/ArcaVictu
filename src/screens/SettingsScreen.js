@@ -1,11 +1,10 @@
 import React, {useContext} from 'react';
-import { View, Text, NativeModules, Alert } from 'react-native';
+import { View, Text, NativeModules, Alert, StyleSheet, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useState, useEffect } from 'react'
 import { supabase } from '../constants';
-import { StyleSheet } from 'react-native'
-import { Button} from 'react-native-elements'
+import { Button, Input} from 'react-native-elements'
 import { PageContext } from '../constants/pageContext';
 import { ButtonGroup} from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -19,7 +18,11 @@ export default function SettingsScreen(){
   const [ifMeat, setIfMeat] = useState(0)
   const [ifDairy, setIfDairy] = useState(0)
   const [ifGrains, setIfGrains] = useState(0)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [openDrop, setOpenDrop] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -43,7 +46,7 @@ export default function SettingsScreen(){
     await supabase.auth.signOut()
     NativeModules.DevSettings.reload();
     try {
-      await AsyncStorage.clear();
+      await AsyncStorage.setItem('list', '')
   } catch(e) {
       console.log(e);
   }
@@ -81,6 +84,7 @@ export default function SettingsScreen(){
       .update({ eatDairy: dairy})
       .eq('id', userId)
       if(error){
+        Alert.alert(error.message);
       }
   }
   async function setPreferencesGrains(val){
@@ -92,7 +96,29 @@ export default function SettingsScreen(){
       if(error){
         Alert.alert(error.message);
       }
-      Alert.alert(JSON.stringify(val));
+  }
+
+  async function deleteAccount(){
+    const { data, error } = await supabase.rpc('check_user_password', {current_plain_password:password})
+    if(data){
+      
+    }
+    if(error){
+      Alert.alert(error.message);
+    }
+  }
+  async function editPassword(){
+      const { data, error } = await supabase.rpc('change_user_password', {current_plain_password:password,new_plain_password:newPassword})
+      if(error){
+        Alert.alert(error.message);
+      }
+      else{
+        setOpenEdit(!openEdit)
+      }
+      setPassword('')
+      setNewPassword('')
+      console.log(JSON.stringify(userId))
+      console.log(JSON.stringify(session))
   }
     
     return (
@@ -133,11 +159,72 @@ export default function SettingsScreen(){
               setPreferencesGrains(value);
             }}/>
         </View>
-        <Button title="Zmień hasło" buttonStyle={styles.button} onPress={()=>signOut()}/>
+        <Button title="Zmień hasło" buttonStyle={styles.button} onPress={()=>setOpenEdit(!openEdit)}/>
         <View className="border-b-2 border-[#FFF6DC] w-4/5"/>
-        <Button title="Usuń konto" buttonStyle={styles.button} onPress={()=>signOut()}/>
+        <Button title="Usuń konto" buttonStyle={styles.button} onPress={()=>setOpenDrop(!openDrop)}/>
         <View className="border-b-2 border-[#FFF6DC] w-4/5"/>
         <Button title="Wyloguj" buttonStyle={styles.button} onPress={()=>signOut()}/>
+        <Modal visible={openDrop}>
+              <View className="flex-1 justify-center bg-[#FFF6DC]" >
+              <Text className="font-bold p-3" style={{fontSize:hp(5), textAlign:'center'}}>Czy na pewno chcesz usunąć konto? </Text>
+              <Text className="pt-3" style={{fontSize:hp(3), textAlign:'center'}}>Ta operacja jest nieodwracalna.</Text>
+              <Text className="pb-3" style={{fontSize:hp(2.5), textAlign:'center'}}>Aby zatwierdzić wpisz swoje hasło.</Text>
+              <View style={styles.verticallySpaced}>
+              <Input
+                label="Hasło"
+                leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry={true}
+                placeholder="Hasło"
+                autoCapitalize={'none'}
+              />
+            </View>
+              <View className="flex items-center" style={{paddingTop:wp(10), paddingBottom:wp(3)}}>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80), padding:wp(5)}} title="USUŃ" onPress={() => deleteAccount()}/>
+              </View>
+              </View>
+            <Button titleStyle={{fontSize:hp(5)}} buttonStyle={{backgroundColor: '#b1ae95',width: wp(100), height:hp(30)}} 
+            onPress={()=> {
+              setOpenDrop(!openDrop)
+              setPassword('');
+            }} 
+            title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+            </Modal>
+            <Modal visible={openEdit}>
+              <View className="flex-1 justify-center bg-[#FFF6DC]" >
+              <View style={styles.verticallySpaced}>
+              <Input
+                label="Stere hasło"
+                leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry={true}
+                placeholder=""
+                autoCapitalize={'none'}
+              />
+                            <Input
+                label="Nowe hasło"
+                leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                onChangeText={(text) => setNewPassword(text)}
+                value={newPassword}
+                secureTextEntry={true}
+                placeholder=""
+                autoCapitalize={'none'}
+              />
+            </View>
+              <View className="flex items-center" style={{paddingTop:wp(10), paddingBottom:wp(3)}}>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80), padding:wp(5)}} title="ZMIEŃ" onPress={() => editPassword()}/>
+              </View>
+              </View>
+            <Button titleStyle={{fontSize:hp(5)}} buttonStyle={{backgroundColor: '#b1ae95',width: wp(100), height:hp(10)}} 
+            onPress={()=> {
+              setOpenEdit(!openEdit)
+              setPassword('');
+              setNewPassword('');
+            }} 
+            title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
+            </Modal>
     </SafeAreaView>
     )
 }
@@ -146,5 +233,13 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#b1ae95',
     width:wp(100),
+  },
+  verticallySpaced: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    alignSelf: 'stretch',
+  },
+  mt20: {
+    marginTop: 20,
   },
 })

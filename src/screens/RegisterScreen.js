@@ -8,9 +8,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default function Register() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [session, setSession] = useState(null)
   const navigation = useNavigation();
 
@@ -39,6 +40,31 @@ export default function Register() {
     setLoading(false)
     navigation.navigate('Login')
   }
+  const validatePass = (val)=>{
+    if(val.length<6 || !email.includes("@") || name.length<2){
+      setLoading(true);
+    }
+    else{
+      setLoading(false)
+    }
+  }
+  const validateEmail = (val)=>{
+    if(!val.includes("@") || password.length<6 || name.length<2){
+      setLoading(true);
+    }
+    else{
+      setLoading(false)
+    }
+  }
+  const validateName = (val)=>{
+    if(val.length<2 || !email.includes("@") || password.length<6){
+      setLoading(true);
+    }
+    else{
+      setLoading(false)
+    }
+  }
+
   return (
     <SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
     <View className="w-full p-2 items-center">
@@ -46,32 +72,44 @@ export default function Register() {
         <Input
           label="Imię"
           leftIcon={{ type: 'font-awesome', name: 'user' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="imię"
+          onChangeText={(text) => {
+            setName(text)
+            validateName(text)
+          }}
+          value={name}
+          placeholder="Imię"
           autoCapitalize='none'
         />
+                {  name.length<2 && <Text className="text-center text-red-500">Imię musi zawierać minimum 2 znaki.</Text>}
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => {
+            setEmail(text)
+            validateEmail(text)
+          }}
           value={email}
           placeholder="email@address.com"
           autoCapitalize='none'
         />
+                {  !email.includes("@") && <Text className="text-center text-red-500">Email musi zawierać znak @.</Text>}
       </View>
       <View style={styles.verticallySpaced}>
         <Input
           label="Hasło"
           leftIcon={{ type: 'font-awesome', name: 'lock' }}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={(text) => {
+            setPassword(text)
+            validatePass(text)
+          }}
           value={password}
           secureTextEntry={true}
           placeholder="Hasło"
           autoCapitalize={'none'}
         />
+        {  password.length<6 && <Text className="text-center text-red-500">Hasło musi mieć minimum 6 znaków.</Text>}
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button  buttonStyle={styles.button} title="Zarejestruj" disabled={loading} onPress={() => signUpWithEmail()}/>

@@ -12,16 +12,20 @@ import { AntDesign } from '@expo/vector-icons';
 export default function RecipesScreen(){
 
   const navigation = useNavigation();
-  //const [session, setSession] = useState(null)
-  //const [userId, setUserId] = useState(null)
   const [userId] = useContext(PageContext);
   const [recipes, setRecipes] = useState('')
   const [recipesList, setRecipesList] = useState('')
+  const [containsMeat, setContainsMeat] = useState('')
+  const [containsDairy, setContainsDairy] = useState('')
+  const [containsGrains, setContainsGrains] = useState('')
   const [search, setSearch] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
     useEffect(() => {
       setSelectedIndex(0)
       getRecipes()
+      getRestrictedMeat()
+      getRestrictedDairy()
+      getRestrictedGrains()
     }, []); 
     useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -29,7 +33,18 @@ export default function RecipesScreen(){
       });
       return unsubscribe;
     }, [navigation]);
-
+    async function getRestrictedMeat(){
+      const { data} = await supabase.rpc('get_recipes_ids_by_category', {category:3})
+      setContainsMeat(Object.values(data))
+    }
+    async function getRestrictedDairy(){
+      const { data} = await supabase.rpc('get_recipes_ids_by_category', {category:4})
+      setContainsDairy(Object.values(data))
+    }
+    async function getRestrictedGrains(){
+      const { data} = await supabase.rpc('get_recipes_ids_by_category', {category:1})
+      setContainsGrains(Object.values(data))
+    }
     async function getRecipes() {
         try {
           let query = supabase.from('recipes')
