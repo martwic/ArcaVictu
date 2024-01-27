@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { View, Text, NativeModules } from 'react-native';
+import { View, Text, NativeModules, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useState, useEffect } from 'react'
@@ -25,6 +25,7 @@ export default function SettingsScreen(){
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserId(session.user.id)
       setUserEmail(session.user.email)
+      getPreferences()
     })
 
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -46,7 +47,52 @@ export default function SettingsScreen(){
   } catch(e) {
       console.log(e);
   }
+  }
+  async function getPreferences(){
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('eatMeat,eatDairy,eatGrains')
+      .eq('id', userId).single()
+      if(error){
+        Alert.alert(error.message);
+      }
+      if(data){
+        setIfMeat((data.eatMeat)?0:1)
+        setIfDairy((data.eatDairy)?0:1)
+        setIfGrains((data.eatGrains)?0:1)
+      }
+      
+  }
 
+  async function setPreferencesMeat(val){
+    var  meat = val==0 ? true:false;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ eatMeat: meat})
+      .eq('id', userId)
+      if(error){
+        Alert.alert(error.message);
+      }
+  }
+  async function setPreferencesDairy(val){
+    var  dairy = val==0 ? true:false;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ eatDairy: dairy})
+      .eq('id', userId)
+      if(error){
+      }
+  }
+  async function setPreferencesGrains(val){
+    var  grains = val==0 ? true:false;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ eatGrains: grains})
+      .eq('id', userId)
+      if(error){
+        Alert.alert(error.message);
+      }
+      Alert.alert(JSON.stringify(val));
   }
     
     return (
@@ -68,6 +114,7 @@ export default function SettingsScreen(){
             selectedButtonStyle={{backgroundColor:'#b1ae95'}}
             onPress={(value) => {
               setIfMeat(value)
+              setPreferencesMeat(value);
             }}/>                       
                 <ButtonGroup 
             buttons={['Jem nabiał',  'Nie jem nabiału']}
@@ -75,6 +122,7 @@ export default function SettingsScreen(){
             selectedButtonStyle={{backgroundColor:'#b1ae95'}}
             onPress={(value) => {
               setIfDairy(value)
+              setPreferencesDairy(value);
             }}/>
                 <ButtonGroup 
             buttons={['Jem produkty zbożowe',  'Nie jem produktów zbożowych']}
@@ -82,6 +130,7 @@ export default function SettingsScreen(){
             selectedButtonStyle={{backgroundColor:'#b1ae95'}}
             onPress={(value) => {
               setIfGrains(value)
+              setPreferencesGrains(value);
             }}/>
         </View>
         <Button title="Zmień hasło" buttonStyle={styles.button} onPress={()=>signOut()}/>

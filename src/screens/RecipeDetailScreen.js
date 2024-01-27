@@ -213,7 +213,7 @@ export default function RecipeDetailScreen(props) {
         </View>
         <ScrollView className="flex-1 p-2">
 
-            <View className="items-center justify-center flex-row">
+            <View className="items-center justify-center flex-row pr-5">
             <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}><Feather name="clock" size={24} color="black" /> {item.preparationTime}' + {item.waitingTime}'</Text>
             <Text style={{fontSize:hp(2.5), padding:hp(2.5)}}>
             <InputSpinner height={hp(5)}  inputStyle={{fontSize:hp(2.5)}} 
@@ -246,7 +246,7 @@ export default function RecipeDetailScreen(props) {
             renderItem={({item}) => <View className="flex-row"><Entypo name="dot-single" size={24} color="black" /><Text style={{fontSize:hp(2.2)}}>{item.products.name} - {item.amount*portions} {item.measure=='ml' || item.measure=='g'? '': "x "}{item.measure}</Text></View>}
             />
             <Text className="font-['Gothic'] font-bold" style={{fontSize:hp(3), padding:hp(1)}}>Opis:</Text>
-            <Text style={{fontSize:hp(2.2), padding:hp(1),paddingBottom:hp(4), textAlign:'justify'}}>{item.directions}</Text>
+            <Text style={{fontSize:hp(2.2), padding:hp(1),paddingBottom:hp(4), paddingRight:hp(5), textAlign:'justify'}}>{item.directions}</Text>
             </View>
         </ScrollView>
         <View className="flex-row items-center">

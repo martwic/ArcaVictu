@@ -18,14 +18,6 @@ export default function Login() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUserId(session.user.id)
-      //if(session!=null && session.user!=null){
-        //navigation.navigate('App');
-    //}
-    })
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUserId(session.user.id)
@@ -41,7 +33,6 @@ export default function Login() {
       email: email,
       password: password,
     })
-
     if (error) Alert.alert(error.message)
     setLoading(false)
   }

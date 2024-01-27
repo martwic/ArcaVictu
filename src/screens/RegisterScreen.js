@@ -44,6 +44,16 @@ export default function Register() {
     <View className="w-full p-2 items-center">
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
+          label="Imię"
+          leftIcon={{ type: 'font-awesome', name: 'user' }}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+          placeholder="imię"
+          autoCapitalize='none'
+        />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
           label="Email"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
           onChangeText={(text) => setEmail(text)}
