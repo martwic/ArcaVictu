@@ -68,7 +68,7 @@ export default function Login() {
     if (!email.includes("@")) {
       Alert.alert("Brak adresu","Wprowadź adres email do wysłania linku w pole do wysłania linku, a następnie zatwierdź.")
     }
-    const resetPasswordURL = Linking.createURL("https://arcavictu-password-reset.vercel.app/");
+    const resetPasswordURL = Linking.createURL("https://arcavictu-password-reset.vercel.app/resetpassword");
 
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: resetPasswordURL,
