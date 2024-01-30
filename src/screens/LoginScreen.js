@@ -19,68 +19,102 @@ export default function Login() {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
+      if(session != null){
       setSession(session)
-      setUserId(session.user.id)
-      if(session!=null && session.user!=null){
+      setUserId(session.user.id)}
+      if (session != null && session.user != null) {
         navigation.navigate('App');
-    }
+      }
     })
 
   }, [])
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setEmail('')
+      setPassword('')
+    });
+    return unsubscribe;
+  }, [navigation]);
   async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+    if (password.length < 1 || email.length < 1) {
+      Alert.alert("Wprowadź dane")
+    }
+    else {
+      if (!email.includes("@")) {
+        Alert.alert("Niepoprawny format adresu email")
+      }
+      else {
+        if (password.length < 6) {
+          Alert.alert("Wprowadzone hasło jest za krótkie")
+        }
+        else {
+          setLoading(true)
+          const { error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+          })
+          if (error) {
+            if (error.message == "Invalid login credentials")
+              Alert.alert("Nieprawidłowe dane logowania")
+          }
+
+          setLoading(false)
+        }
+      }
+    }
   }
 
   const resetPassword = async () => {
-    const resetPasswordURL = Linking.createURL("/ResetPassword");
-  
+    if (!email.includes("@")) {
+      Alert.alert("Brak adresu","Wprowadź adres email do wysłania linku w pole do wysłania linku, a następnie zatwierdź.")
+    }
+    const resetPasswordURL = Linking.createURL("https://arcavictu-password-reset.vercel.app/");
+
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: resetPasswordURL,
     });
-  
-    return { data, error };
+    if(!error){
+      Alert.alert("Wysłano link do resetu hasła.")
+    }
+    else{
+      Alert.alert(error.message)
+    }
   };
   return (
-<SafeAreaView  className="flex-1 justify-center items-center bg-[#FFF6DC]">
-    <View className=" w-full p-2 items-center">
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
-          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize={'none'}
-        />
+    <SafeAreaView className="flex-1 justify-center items-center bg-[#FFF6DC]">
+      <View className=" w-full p-2 items-center">
+        <View style={[styles.verticallySpaced, styles.mt20]}>
+          <Input
+            label="Email"
+            leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            placeholder="email@address.com"
+            autoCapitalize={'none'}
+          />
+        </View>
+        <View style={styles.verticallySpaced}>
+          <Input
+            label="Hasło"
+            leftIcon={{ type: 'font-awesome', name: 'lock' }}
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry={true}
+            placeholder="Hasło"
+            autoCapitalize={'none'}
+          />
+        </View>
+        <View style={[styles.verticallySpaced, styles.mt20]}>
+          <Button title="Zaloguj" buttonStyle={styles.button} disabled={loading} onPress={() => signInWithEmail()} />
+        </View>
+        <View>
+          <Text style={{ fontSize: hp(2) }}>Nie masz konta?</Text>
+          <Text className='font-bold' style={{ fontSize: hp(2.5) }} onPress={() => navigation.navigate('Register')}>Zarejestruj się</Text>
+        </View>
+        <View>
+          <Text className='font-bold' style={{ fontSize: hp(2.2) }} onPress={() => resetPassword()}>Nie pamiętam hasła</Text>
+        </View>
       </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Hasło"
-          leftIcon={{ type: 'font-awesome', name: 'lock' }}
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Hasło"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Zaloguj" buttonStyle={styles.button} disabled={loading} onPress={() => signInWithEmail()} />
-      </View>
-      <View>
-      <Text style={{fontSize:hp(2)}}>Nie masz konta?</Text>
-      <Text className='font-bold' style={{fontSize:hp(2.5)}} onPress={() => navigation.navigate('Register')}>Zarejestruj się</Text>
-      </View>
-      <View>
-      <Text className='font-bold' style={{fontSize:hp(2.2)}} onPress={() => resetPassword()}>Nie pamiętam hasła</Text>
-      </View>
-    </View>
     </SafeAreaView>
   )
 }

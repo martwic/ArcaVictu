@@ -37,7 +37,6 @@ export default function RecipesScreen(){
           console.error('Wystąpił błąd:', error);
         }
       };
-    
       fetchData();
     }, []); 
     useEffect(() => {
@@ -47,6 +46,10 @@ export default function RecipesScreen(){
     useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         getRecipes()
+        getRestrictedMeat();
+        getRestrictedDairy();
+        getRestrictedGrains();
+        getPreferences();
       });
       return unsubscribe;
     }, [navigation]);
@@ -166,8 +169,7 @@ const filter = (index, search, meat, dairy, grains)=>{
             <View style={{backgroundColor:'white', margin:hp(1), width: wp(43)}}>
               
               <Image style={{height:hp(20)}} onPress={()=> {
-                navigation.navigate('RecipeDetail', {...item})
-                console.log(item)}} 
+                navigation.navigate('RecipeDetail', {...item})}} 
                 source={{uri: `https://gqslyondgncsrrryejpi.supabase.co/storage/v1/object/public/recipes/`+item.id+`.jpg`}}/>
               
               <Text style={{fontSize:hp(2.3),padding:hp(0.5), textAlign:'center'}} onPress={()=> navigation.navigate('RecipeDetail', {...item})}>

@@ -61,7 +61,7 @@ export default function EditRecipeScreen({route}) {
     if (error) Alert.alert(error.message)
     else{
       ingredients.forEach((val) => {
-        ingredientsToDatabase.push({recipe_id: recipe.id,  product_id:val.id, weight: parseFloat(val.weight), amount:parseFloat(val.amount), measure:val.measure});
+        ingredientsToDatabase.push({recipe_id: recipe.id,  product_id:val.id, weight: val.weight.length<1?0:parseFloat(val.weight), amount:(val.amount.length<1 || parseFloat(val.amount)==0)?(val.weight.length<1?0:parseFloat(val.weight)):parseFloat(val.amount), measure:(val.measure.length<1 )?'g':val.measure});
           });
       }
       const { error2 } = await supabase.from('ingredients').delete().eq('recipe_id',recipe.id)
@@ -247,7 +247,7 @@ export default function EditRecipeScreen({route}) {
                 onChangeText={(text) => {
                   let tempArray = [...ingredients]
                   tempArray=tempArray.filter(t => t.id !== item.id)
-                  tempArray.push({id: item.id, name: item.name, weight: item.weight, amount: text.replace(/[^0-9]/g, ''), measure:item.measure})
+                  tempArray.push({id: item.id, name: item.name, weight: item.weight, amount: text.replace(/[^\d.]+/g, ''), measure:item.measure})
                   setIngredients(tempArray)
               }}
               /></View>
@@ -271,7 +271,10 @@ export default function EditRecipeScreen({route}) {
               </View>}
   />
                 <View className="flex-row justify-end items-center" style={{paddingTop:wp(3), paddingBottom:wp(3)}}>
-              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj składnik" onPress={() => setOpen(!openM)}/>
+              <Button  titleStyle={{color:'#7F8D9A'}} buttonStyle={{backgroundColor: '#FFC6AC', borderRadius:25, width:wp(80)}} title="Dodaj składnik" 
+              onPress={() => {setOpen(!openM)
+              setProductsList(products)}
+              }/>
               </View>
       </View>
       </ScrollView>
@@ -310,7 +313,10 @@ export default function EditRecipeScreen({route}) {
           <Button buttonStyle={{    backgroundColor: '#b1ae95',width: wp(100),}} 
           onPress={()=> {
             setOpen(!openM) 
-            setSearch('')}} 
+            setSearch('')
+            //let filtered = products.filter((product)=>product.name.toLowerCase().includes(""))
+            setProductsList(products)
+          }} 
             title='Anuluj' style={{backgroundColor:'transparent', borderColor:'transparent'}} inputContainerStyle={{backgroundColor:'white', width:wp(80), height:hp(3)}}/>
           </>
       </Modal>
@@ -351,7 +357,7 @@ export default function EditRecipeScreen({route}) {
                 value={productKcal}
                 keyboardType='numeric'
                 style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
-                onChangeText={(text) => { setProductKcal(text.replace(/[^0-9]/g, ''))
+                onChangeText={(text) => { setProductKcal(text.replace(/[^\d.]+/g, ''))
               }}
               /></View>
               <View className="flex-row justify-end right-1/4 items-center p-1">
@@ -361,7 +367,7 @@ export default function EditRecipeScreen({route}) {
                 value={productCarbo}
                 keyboardType='numeric'
                 style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
-                onChangeText={(text) => { setProductCarbo(text.replace(/[^0-9]/g, ''))
+                onChangeText={(text) => { setProductCarbo(text.replace(/[^\d.]+/g, ''))
               }}
               /></View>
               <View className="flex-row justify-end right-1/4 items-center p-1">
@@ -371,7 +377,7 @@ export default function EditRecipeScreen({route}) {
                 value={productFats}
                 keyboardType='numeric'
                 style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
-                onChangeText={(text) => { setProductFats(text.replace(/[^0-9]/g, ''))
+                onChangeText={(text) => { setProductFats(text.replace(/[^\d.-]+/g, ''))
               }}
               /></View>
               <View className="flex-row justify-end right-1/4 items-center p-1">
@@ -381,7 +387,7 @@ export default function EditRecipeScreen({route}) {
                 value={productProtein}
                 keyboardType='numeric'
                 style={{backgroundColor:'white', width:wp(20), textAlign:'center', fontSize:hp(2)}}
-                onChangeText={(text) => { setProductProtein(text.replace(/[^0-9]/g, ''))
+                onChangeText={(text) => { setProductProtein(text.replace(/[^\d.]+/g, ''))
               }}
               /></View>
               </View>

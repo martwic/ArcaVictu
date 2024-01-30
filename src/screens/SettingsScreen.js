@@ -16,11 +16,10 @@ export default function SettingsScreen(){
   const [session, setSession] = useState(null)
   const [userId, setUserId] = useContext(PageContext);
   const [userEmail, setUserEmail] = useState('')
-  const [userName, setUserName] = useState('Marta')
   const [ifMeat, setIfMeat] = useState(0)
   const [ifDairy, setIfDairy] = useState(0)
   const [ifGrains, setIfGrains] = useState(0)
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [openDrop, setOpenDrop] = useState(false);
@@ -39,14 +38,14 @@ export default function SettingsScreen(){
         //setUserId(session.user.id)
       }
       else{
-        setUserId(null)
+        navigation.navigate('Login');
       }
 
     })
   }, [])
   async function signOut(){
     await supabase.auth.signOut()
-    setUserId(null)
+    
     try {
       await AsyncStorage.setItem('list', '')
   } catch(e) {
@@ -57,7 +56,7 @@ export default function SettingsScreen(){
   async function getPreferences(){
     const { data, error } = await supabase
       .from('profiles')
-      .select('eatMeat,eatDairy,eatGrains')
+      .select('eatMeat,eatDairy,eatGrains,full_name')
       .eq('id', userId).single()
       if(error){
         Alert.alert(error.message);
@@ -66,6 +65,7 @@ export default function SettingsScreen(){
         setIfMeat((data.eatMeat)?0:1)
         setIfDairy((data.eatDairy)?0:1)
         setIfGrains((data.eatGrains)?0:1)
+        setName(data.full_name)
       }
       
   }
@@ -131,7 +131,7 @@ export default function SettingsScreen(){
         </View>
         <View className="flex-1" style={{width:wp(100)}}>
 
-        <Text className="font-['Gothic'] font-bold pt-3 pl-3" style={{fontSize:hp(4.5)}}>Cześć, {userName}!</Text>
+        <Text className="font-['Gothic'] font-bold pt-3 pl-3" style={{fontSize:hp(4.5)}}>Cześć, {name}!</Text>
         <View className="flex-row items-center pl-3">
         <Text style={{fontSize:hp(2.2)}}><Fontisto name="email" size={20} color="black" /> </Text>
         <Text style={{fontSize:hp(2.2)}}>{userEmail}</Text>
